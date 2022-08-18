@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <meta charset="UTF-8">
+    <title>Competence Finder</title>
+    <script src="JavaScript/search.js"></script>
+    <div class="topmenu">
+        <a class="active" href="index.html">Hem</a>
+        <a href="allaKonsulter.html">Alla konsulter</a>
+        <a href="search">Avancerad sökning</a>
+        <a href="logout">Logga ut</a>
+        <form id="searchForm">
+        <input name="query" id="search" type="text" class="input" placeholder="Sök"></form>
+    </div>
+</head>
+<body onload="search()">
+<div id="textcontainer"></div>
+<div id="results-container"></div>
+
+  <script>
+    function search() {
+      if ("{{ search }}" == "True") {
+          document.getElementById("textcontainer").innerHTML = "<h1>Searching for "+"{{ keywords}}</h1>";
+          document.getElementById("results-container").innerHTML = "<iframe width='600' height='500' src='/search.html'>";
+
+      }
+    }
+  </script>
+<script src="JavaScript/index.js"></script>
+
+
+<footer>
+    <div id="menu-outerFooter">
+        <div class="table">
+            <a href="mailto:jonathan.lissman.intern@purplescout.se">Support</a>
+            <a href="https://www.purplescout.se">Kontakt</a>
+        </div>
+    </div>
+</footer>
+</body>
+
+
+</html>
