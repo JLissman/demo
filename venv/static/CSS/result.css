@@ -1,0 +1,74 @@
+.search-results-container{
+    text-align:left;
+    position:relative;
+    top:-30%;
+}
+
+.profile-img {
+    width:50px;
+    height:50px;
+}
+
+.location-tag{
+    width:40px;
+    height:30px;
+}
+.entity-result {
+    display:inline-grid;
+    background: #0099ff;
+    margin-left:10%;
+    border-radius: 25px;
+    border: 2px solid rgb(0, 0, 0);
+    padding: 2%;
+}
+.result-name {
+    font-size:200%;
+    text-align:center;
+    position:relative;
+    top:-40%;
+}
+.result-role {
+    text-align:center;
+    position:relative;
+    top:-40%;
+    font-size:150%;
+}
+.result-tags-list {
+    text-align:center;
+    list-style:none;
+
+}
+.table {
+    position:relative;
+    top:-38%;
+	display: table;
+	margin: 0 auto;
+}
+
+.tag {
+    border-radius: 25px;
+  border: 1px solid rgb(0, 0, 0);
+    padding:3px;
+    margin:2px;
+display: inline;
+}
+
+
+.result-location{
+    float:right;
+
+}
+h1{
+    text-align:center;
+}
+body{
+    min-height: 100vh;
+    margin: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    background-image:url("https://adesso-sweden.se/adesso-sweden-se/header-sweden-without-text_W1920xH768_CUTOUT.png");
+    background-color:deepskyblue;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+
+}

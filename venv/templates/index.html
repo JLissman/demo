@@ -5,14 +5,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
     <meta charset="UTF-8">
     <title>Competence Finder</title>
-    <script src="JavaScript/search.js"></script>
     <div class="topmenu">
-        <a class="active" href="index.html">Hem</a>
+        <a class="active" href="/">Hem</a>
         <a href="allaKonsulter.html">Alla konsulter</a>
         <a href="search">Avancerad sökning</a>
         <a href="logout">Logga ut</a>
-        <form id="searchForm">
-        <input name="query" id="search" type="text" class="input" placeholder="Sök"></form>
+        <form id="searchForm" action="search">
+        <input name="query" id="search" type="text" class="input" href="search" placeholder="Sök"></form>
     </div>
 </head>
 <body onload="search()">
@@ -23,12 +22,10 @@
     function search() {
       if ("{{ search }}" == "True") {
           document.getElementById("textcontainer").innerHTML = "<h1>Searching for "+"{{ keywords}}</h1>";
-          document.getElementById("results-container").innerHTML = "<iframe width='600' height='500' src='/search.html'>";
-
       }
     }
   </script>
-<script src="JavaScript/index.js"></script>
+
 
 
 <footer>
