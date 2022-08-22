@@ -14,8 +14,11 @@
         <a href="">Alla konsulter</a>
         <a href="">Avancerad sökning</a>
         <a href="logout">Logga ut</a>
-        <form id="searchForm" action="search">
-        <input name="query" id="search" type="text" class="input" href="search" placeholder="Sök"></form>
+        <form id="searchForm" action="search" autocomplete="off">
+        <input name="query" id="search" type="text" list="programmingLanguages" class="input" href="search" placeholder="Search">
+            <datalist id="programmingLanguages">
+                {{programmingLanguages|safe}}
+                </datalist></form>
     </div>
 <h1>{{ keywords}}</h1>
 <div class="search-results-container">

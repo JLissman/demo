@@ -1,5 +1,6 @@
 .search-results-container{
     text-align:left;
+    border:2px solid rgb(0,0,0);
 
 }
 
@@ -17,6 +18,7 @@
     background: #0099ff;
     margin-left:10%;
     border-radius: 25px;
+
     border: 2px solid rgb(0, 0, 0);
     padding: 2%;
 }
@@ -45,11 +47,12 @@
 }
 
 .tag {
+    margin-top: -1px;
     border-radius: 25px;
-  border: 1px solid rgb(0, 0, 0);
+    border: 1px solid rgb(0, 0, 0);
     padding:3px;
     margin:2px;
-display: inline;
+    display: inline;
 }
 
 

@@ -12,8 +12,11 @@
         <div id="userName">Logged in as: {{session['name']}}</div>
         <a href="logout">Log out</a>
 
-        <form id="searchForm" action="search">
-        <input name="query" id="search" type="text" class="input" href="search" placeholder="Search"></form>
+        <form id="searchForm" action="search" autocomplete="off">
+        <input name="query" id="search" type="text" list="programmingLanguages" class="input" href="search" placeholder="Search">
+            <datalist id="programmingLanguages">
+                {{programmingLanguages|safe}}
+                </datalist></form>
     </div>
 </head>
 <body onload="search()">

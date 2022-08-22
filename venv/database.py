@@ -35,13 +35,23 @@ def testconnection():
 
 
 
-def getAllFromDb():
+def getAllConsultants():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM consult ORDER BY firstname ASC;")
     allConsultants = cursor.fetchall()
     close_connection(connection)
     return allConsultants
+
+
+def getAllTags():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT DISTINCT TAG from TAGS")
+    allTags = cursor.fetchall()
+    close_connection(connection)
+    return allTags
+
 
 def searchDB(query):
     connection = get_connection()
