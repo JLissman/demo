@@ -5,47 +5,24 @@
     <title>Result</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/result.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
-    <script type="text/javascript" src="{{ url_for('static', filename='js/searchResults.js')}}"></script>
-    <div class="topmenu">
+
+
+</head>
+<body >
+<div class="topmenu">
         <a class="active" href="/">Hem</a>
         <a href="">Alla konsulter</a>
         <a href="">Avancerad sökning</a>
-        <a href="">Logga ut</a>
+        <a href="logout">Logga ut</a>
         <form id="searchForm" action="search">
         <input name="query" id="search" type="text" class="input" href="search" placeholder="Sök"></form>
     </div>
-</head>
-<body >
-<script>
-    window.onload = function(){
-        #searchResults();
-    }
-
-    function searchResults(data) {
-        console.log("running script")
-        data = {{data|tojson}}
-        console.log(data[0][2])
-        console.log(data.length)
-        for (let x = 0; x < data.length;x++) {
-            console.log("working on " + x + " result")
-            let start = '<li className="entity-result"> <div className="searchResult"> <div className="result-img"> <img className="profile-img"src="' + data[x][4] + '"> </div> <div className="result-name">' + data[x][1] + '</div> <div className="result-role">' + data[x][2] + '</div> <div className="table"> <ul className="result-tags-list">'
-            let tags = data[x][3].split(",")
-            HTMLtags = ""
-            for (let y = 0; y < tags.length; y++){
-                HTMLtags = HTMLtags + '<li className="tag">' + tags[y] + '</li>'
-                }
-            let end = '</ul></div><div className="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam ligula urna,pharetra id accumsan sit amet, congue sed erat. Integer sed finibus enim. Donec sit amet bibendumsapien. </div> <div className="result-location"><img className="location-tag"src="https://flyclipart.com/thumb2/location-pin-emoji-934877.png">'+data[x][5]+'</div></div></li>'
-
-        finishedHTML = start + HTMLtags + end;
-        }
-    document.getElementsByClassName("resultList").item(0).innerHTML = document.getElementsByClassName("resultList").item(0).innerHTML + finishedHTML;
-    }
-</script>
-<h1>Searching for {{ keywords}}</h1>
+<h1>{{ keywords}}</h1>
 <div class="search-results-container">
 <ul class="resultList">
 
     {{ data|safe }}
+
 </ul>
 </div>
 <footer>

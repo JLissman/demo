@@ -6,12 +6,14 @@
     <meta charset="UTF-8">
     <title>Competence Finder</title>
     <div class="topmenu">
-        <a class="active" href="/">Hem</a>
-        <a href="allaKonsulter.html">Alla konsulter</a>
-        <a href="search">Avancerad sökning</a>
-        <a href="logout">Logga ut</a>
+        <a class="active" href="/">Home</a>
+        <a href="allaKonsulter.html">All Consultants</a>
+        <a href="search">Avanced Seach</a>
+        <div id="userName">Logged in as: {{session['name']}}</div>
+        <a href="logout">Log out</a>
+
         <form id="searchForm" action="search">
-        <input name="query" id="search" type="text" class="input" href="search" placeholder="Sök"></form>
+        <input name="query" id="search" type="text" class="input" href="search" placeholder="Search"></form>
     </div>
 </head>
 <body onload="search()">
@@ -32,7 +34,7 @@
     <div id="menu-outerFooter">
         <div class="table">
             <a href="mailto:jonathan.lissman.intern@purplescout.se">Support</a>
-            <a href="https://www.purplescout.se">Kontakt</a>
+            <a href="https://www.purplescout.se">Contact</a>
         </div>
     </div>
 </footer>

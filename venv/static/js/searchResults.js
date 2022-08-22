@@ -1,4 +1,6 @@
 
+    <script type="text/javascript" src="{{ url_for('static', filename='js/searchResults.js')}}"></script>
+
 
     function searchResults(data) {
         console.log("running script")

@@ -1,7 +1,6 @@
 .search-results-container{
     text-align:left;
-    position:relative;
-    top:-30%;
+
 }
 
 .profile-img {
@@ -39,7 +38,7 @@
 
 }
 .table {
-    position:relative;
+
     top:-38%;
 	display: table;
 	margin: 0 auto;
