@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import time
 from bs4 import BeautifulSoup
+import database as db
 
 #auto update chromedriver
 chromedriver_autoinstaller.install()
@@ -22,19 +23,25 @@ def debug():
     for link in profile_url_list:
         if profile_url_list.count(link) > 1:
             print(link+" already in list")
-    print(len(profile_url_list))
+    get_profile_info(profile_url_list)
 
 def login():
-    user = "facehump90@gmail.com"
-    password = "Sportlife123"
+    user = ""
+    password = ""
     driver.get('https://www.linkedin.com/login/')
-    driver.find_element('xpath','//*[@id="username"]').send_keys(user)#send in username to username field
-    driver.find_element('xpath','//*[@id="password"]').send_keys(password)#send in password to password field
-    WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="organic-div"]/form/div[3]/button'))).click()#click log in
-    try:
-        driver.find_element('xpath','//*[@id="ember455"]/button').click()#click skip phonenumber
-    except:
-        pass
+    if "signup" not in driver.current_url:
+        driver.find_element('xpath','//*[@id="username"]').send_keys(user)#send in username to username field
+        driver.find_element('xpath','//*[@id="password"]').send_keys(password)#send in password to password field
+        WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="organic-div"]/form/div[3]/button'))).click()#click log in
+        try:
+            driver.find_element('xpath','//*[@id="ember455"]/button').click()#click skip phonenumber
+        except:
+            pass
+    else:
+        print("Waiting 10 seconds and trying again")
+        time.sleep(10)
+        login()
+
 
 
 def get_people_from_company_search(url, current_list):
@@ -61,27 +68,53 @@ def get_people_from_company_search(url, current_list):
 
 
 
-
+    print("profule_url_list before return "+(str(len(profile_url_list))))
     return profile_url_list
 
 
 def get_profile_info(list):
+    profile_list = []
+    print("getprofileinfo length")
+    print(len(list))
     for profile_url in list:
-        driver.get(list)
-        full_name = driver.get_element('xpath','//*[@id="ember130"]/div[2]/div[2]/div[1]/div[1]/h1').get_attribute('innerText')
+        driver.get(profile_url)
+        full_name = driver.find_element('xpath','//h1[@class="text-heading-xlarge inline t-24 v-align-middle break-words"]').get_attribute('innerText')
         split_name = full_name.split(" ",1)
         first_name = split_name[0]
-        last_name = split_name[1]
-        title = driver.get_element('xpath', '//*[@id="ember130"]/div[2]/div[2]/div[1]/div[2]').get_attribute('innerText').split(" at")
-        title = title[0]
-        location = driver.get_element('xpath', '//*[@id="ember130"]/div[2]/div[2]/div[2]/span[1]').get_attribute('innerText')
-        description = driver.get_element('xpath', '//*[@id="ember144"]/div[3]/div/div/div/span[1]').get_attribute('innerText')
+        last_name = split_name[1:]
+        img_url = driver.find_element('xpath','//img[contains(@title, "'+full_name+'")]').get_attribute('src')
+        if "data:image" in img_url:
+            img_url = "https://microbiology.ucr.edu/sites/default/files/styles/form_preview/public/blank-profile-pic.png?itok=4teBBoet"
+        title = driver.find_element('xpath', '//div[@class="text-body-medium break-words"]').get_attribute('innerText').split(" at")
+        title = title[0].replace("adesso sweden","").replace("purple scout","").replace(" på ","").replace("Adesso","").replace("Sweden","").replace("'","")
+        location = driver.find_element('xpath', '//span[@class="text-body-small inline t-black--light break-words"]').get_attribute('innerText')
+        try:
+            description = driver.find_element('xpath', '//div[contains(@class, "inline-show-more-text")]/span[@class="visually-hidden"]').get_attribute('innerText')
+        except:
+            description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id tellus a justo congue accumsan. Nulla et iaculis magna, at facilisis dolor. Nullam vel mauris sollicitudin, commodo dolor luctus, vehicula lorem. Maecenas justo tellus, lacinia non ante quis, bibendum bibendum ante. Mauris at commodo lectus. Maecenas pellentesque turpis mi, vel feugiat libero scelerisque at. Pellentesque sodales ligula quis ante condimentum, eu suscipit turpis hendrerit. Donec porttitor cursus lectus id vestibulum. Vivamus sed aliquet sem. Nulla metus ligula, condimentum eget tortor quis, auctor sagittis enim. Cras libero urna, tincidunt ut vehicula ac, semper nec enim. Mauris lectus tellus, posuere sit amet tellus a, suscipit hendrerit lectus."
         #go to competence page
+        description = description.replace("'","")
         competence_page = driver.current_url+"/details/skills/"
         driver.get(competence_page)
+        time.sleep(2)
+        try:
+            driver.find_element('xpath','//*[@id="ember89"]').click()#expand results if possible
+        except:
+            pass
+        scroll_to_bottom()
+        ulElements = driver.find_elements('xpath', '//ul[@class="pvs-list "][@tabindex="-1"]/li[@class="pvs-list__paged-list-item artdeco-list__item pvs-list__item--line-separated "]')
+        competence_list = []
+        for ul in ulElements:
+            competence_name_unsplit = ul.get_attribute('innerText')
+            competence_name = competence_name_unsplit.split('\n')
+            competence_list.append(competence_name[0])
+
+        competence_list[:] = [x for x in competence_list if x]
 
 
+        profile_list.append((first_name, last_name, title, img_url, location, description, competence_list))
 
+    return profile_list
 
 
 def scroll_to_bottom():#scrolls to bottom of page for auto-updating results
@@ -105,4 +138,13 @@ def scroll_to_bottom():#scrolls to bottom of page for auto-updating results
 
 
 if __name__ == '__main__':
-    debug()
+    login()
+    anstalldaSearch = ["https://www.linkedin.com/search/results/people/?currentCompany=%5B%2218358%22%2C%2286140890%22%5D&origin=FACETED_SEARCH&sid=mkZ"]
+    profile_url_list = []
+    for url in anstalldaSearch:
+        temp_profile_list = get_people_from_company_search(url, profile_url_list)
+        profile_url_list.extend(temp_profile_list)  # add lists together
+    print("profile url length "+str(len(profile_url_list)))
+    profiles = get_profile_info(profile_url_list)
+    print("Number of profiles saved:"+str(len(profiles)))
+    db.add_consultants_to_db(profiles)

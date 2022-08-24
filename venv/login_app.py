@@ -2,7 +2,7 @@ import os
 import pathlib
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
-from flask import Blueprint, session, redirect, request,abort
+from flask import Blueprint, session, redirect, request,abort, render_template
 from pip._vendor import cachecontrol
 from functools import wraps
 import google.auth.transport.requests
@@ -37,7 +37,14 @@ def login_is_required(function):
 
 @index_page.route('/')
 def index():
-    return "<a href='/login'><button>Login</button></a>"
+    print(session)
+    if "google_id" in session:
+        login_data = "<div class='login'> Already logged in as: "+session["name"]+" </div>"
+    else:
+        login_data = '<a id="login-button" ms-hide-element="true" href="/login" class="button logout login w-button"><img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>Login with Google</a>'
+#'<form class="login-form" action="/login"><button class="google-login-button"> <div class="google-btn"><div class="google-icon-wrapper"><img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/></div><p class="btn-text"><b>Sign in with google</b></p></div></button></form>'
+
+    return render_template("login.html", loginData=login_data)
 
 #@app.route("/login")
 @login_page.route("/login")

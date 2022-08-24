@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/loginpage.css') }}">
+    <meta charset="UTF-8">
+    <title>Competence Finder</title>
+</head>
+<body><div id="login_box">
+<h1> Competence Finder</h1>
+
+<h3>Please log in using your google account connected to the purplescout domain</h3>
+
+    {{loginData|safe}}
+</div>
+</body>
+</html>

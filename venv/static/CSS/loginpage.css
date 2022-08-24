@@ -1,0 +1,66 @@
+
+a#login-button.button.logout.login.w-button {
+    background-color: rgba(83, 138, 238, 0.94);
+    background-image: none;
+    border-radius: 25px;
+    border-width: 0;
+    width:10%;
+    bottom: auto;
+    box-sizing: border-box;
+    color: #173462;
+    cursor: pointer;
+    display: block;
+    flex: 1;
+    font-family: Poppins, sans-serif;
+    font-size: 12px;
+    left: auto;
+    letter-spacing: 1px;
+    line-height: 19px;
+    margin-left: -15px;
+    margin-right: 15px;
+    margin-top: 15px;
+    padding: 5px 15px;
+    position: relative;
+    right: 0;
+    text-align: center;
+    text-decoration: none;
+    top: 0;
+    transition: background-color 150ms;
+    z-index: 30;
+}
+
+a#login-button.button.logout.login.w-button:active {
+    background-color: #52bdf1;
+    outline: 0;
+}
+
+a#login-button.button.logout.login.w-button:hover {
+    background-color: #3abef1;
+    font-weight: 400;
+    outline: 0;
+}
+
+body{
+    min-height: 100vh;
+    background-image:url("https://adesso-sweden.se/adesso-sweden-se/header-sweden-without-text_W1920xH768_CUTOUT.png");
+    background-color:deepskyblue;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    text-align:center;
+}
+
+
+#login_box > h1{
+    background-color:white;
+    border: 1px solid #ccc;
+    font-size:100px;
+    text-align:center;
+
+}
+
+
+#login_box{
+background-color:white;
+left:20%;
+right:30%
+}
