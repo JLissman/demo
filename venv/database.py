@@ -5,7 +5,7 @@ def get_connection():
     connection = mysql.connector.connect(host='localhost',
                                          database='consultants',
                                          user='root',
-                                         password='cometSatelight$42')
+                                         password='root')
     return connection
 
 def close_connection(connection):
@@ -26,12 +26,6 @@ def testconnection():
         # see Terminal for description of the error
         print("\nThe error:\n" + str(e) + "\n")
         return '<h1>Something is broken.</h1>'
-
-
-
-
-
-
 
 
 
@@ -59,8 +53,8 @@ def searchDB(query):
     cursor.execute("SELECT * FROM consult WHERE lower('"+query+"') IN (lower(firstname), lower(lastname),lower(role), lower(location));")
     consult_results = cursor.fetchall()
     cursor.execute("SELECT id FROM tags WHERE lower(tag) LIKE lower('"+query+"')")
-    consult_ids = cursor.fetchall()
-    for consult_id in consult_ids:
+    tags_consult_ids = cursor.fetchall()
+    for consult_id in tags_consult_ids:
         cursor.execute("SELECT * FROM consult WHERE id = '"+str(consult_id[0])+"'")
         consult = cursor.fetchall()
         consult_results = consult_results + consult
