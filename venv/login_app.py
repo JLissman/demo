@@ -39,7 +39,7 @@ def login_is_required(function):
 def index():
     print(session)
     if "google_id" in session:
-        login_data = "<div class='login'> Already logged in as: "+session["name"]+" </div>"
+        return redirect("/home")
     else:
         login_data = '<a id="login-button" ms-hide-element="true" href="/login" class="button logout login w-button"><img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>Login with Google</a>'
 #'<form class="login-form" action="/login"><button class="google-login-button"> <div class="google-btn"><div class="google-icon-wrapper"><img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/></div><p class="btn-text"><b>Sign in with google</b></p></div></button></form>'
@@ -74,7 +74,10 @@ def callback():
         request=token_request,
         audience=GOOGLE_CLIENT_ID
     )
-
+    print("ID_INFO")
+    print(id_info)
+    print(id_info.get("picture"))
+    session["image"] = id_info.get("picture")
     session["google_id"] = id_info.get("sub")  #defing the results to show on the page
     session["name"] = id_info.get("name")
     return redirect("/home")  #the final page where the authorized users will end up

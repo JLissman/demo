@@ -1,10 +1,10 @@
-/* Add a black background color to the top navigation bar */
+
 .topmenu {
     overflow: hidden;
     background-color: #2ab9cc;
 }
 
-/* Style the links inside the navigation bar */
+
 .topmenu a {
     float: left;
     margin-left:10%;
@@ -17,13 +17,11 @@
 
 }
 
-/* Change the color of links on hover */
 .topmenu a:hover {
     background-color: rgba(35, 121, 182, 0.68);
     color: black;
 }
 
-/* Style the "active" element to highlight the current page */
 .topmenu a.active {
     background-color: #2196F3;
     color: white;
@@ -38,6 +36,8 @@
     margin-right: 16px;
     font-size: 17px;
     width:30%;
+    border: 1px solid;
+    border-color:black;
 }
 
 
@@ -86,6 +86,39 @@ footer a:hover{
     display:block;
 
 }
+
+#searchtags-container{
+    margin-top: -1px;
+    border-radius: 25px;
+    border: 1px solid rgb(0, 0, 0);
+    padding:3px;
+    margin:2px;
+    display: none;
+    justify-content:space-between;
+    left:68%;
+    top:9%;
+    position:absolute;
+    float:right;
+}
+
+.searchtag{
+    margin-top: -1px;
+    border-radius: 25px;
+    border: 1px solid rgb(0, 0, 0);
+    background-color:#36a0ee;
+    padding:3px;
+    margin:2px;
+    display: inline;
+    position:relative;
+}
+
+/* x button on tags */
+.removetag{
+    text-decoration:none;
+    position:relative;
+}
+
+
 /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
 @media screen and (max-width: 600px) {
     .topmenu a, .topmenu input[type=text] {
@@ -100,3 +133,4 @@ footer a:hover{
         border: 1px solid #ccc;
     }
 }
+

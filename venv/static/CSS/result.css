@@ -1,6 +1,5 @@
 .search-results-container{
     text-align:left;
-    border:2px solid rgb(0,0,0);
 
 }
 
@@ -14,11 +13,12 @@
     height:30px;
 }
 .entity-result {
+
     display:inline-grid;
     background: #0099ff;
     margin-left:10%;
     border-radius: 25px;
-
+    width:50%;
     border: 2px solid rgb(0, 0, 0);
     padding: 2%;
 }
@@ -37,6 +37,7 @@
 .result-tags-list {
     text-align:center;
     list-style:none;
+    width:50%;
 
 }
 .table {
@@ -69,8 +70,29 @@ body{
     display: grid;
     grid-template-rows: auto 1fr auto;
     background-image:url("https://adesso-sweden.se/adesso-sweden-se/header-sweden-without-text_W1920xH768_CUTOUT.png");
-    background-color:deepskyblue;
+    background-color:purple;
     background-repeat: no-repeat;
     background-size: 100% 100%;
+    text-align:center;
 
+}
+
+.competence-tag-link{
+    color:black;
+    text-decoration:none;
+}
+a{
+    text-decoration:none;
+    color:black;
+
+}
+a:visited{
+    text-decoration:none;
+    color:black;
+
+}
+
+.description{
+    width:50%
+    text-align:center;
 }

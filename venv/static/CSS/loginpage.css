@@ -51,7 +51,6 @@ body{
 
 
 #login_box > h1{
-    background-color:white;
     border: 1px solid #ccc;
     font-size:100px;
     text-align:center;
@@ -60,7 +59,7 @@ body{
 
 
 #login_box{
-background-color:white;
-left:20%;
-right:30%
+    background-color:rgba(136, 20, 217, 0.91);
+    margin-left:20%;
+    margin:right:30%
 }

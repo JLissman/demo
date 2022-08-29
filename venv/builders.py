@@ -5,24 +5,42 @@ import database as db
 
 def build_consultants(data):
     finalHTML = ""
-    for consult in data:
+    print(data)
+    print(len(data))
+    if(len(data) > 0):#8 indexes in datalist if only 1
+        for consult in data:
+            start = '<li class="entity-result"> <div class="searchResult"> <div class="result-img"> <img class="profile-img"src="' + \
+                    consult["image_url"] + '"> </div> <div class="result-name"><a href="/profile?id='+str(consult["consult_id"])+'">' + consult["firstname"] +' '+ consult["lastname"] + '</a></div> <div class="result-role">' + consult["role"] + '</div> <div class="table"> <ul class="result-tags-list">'
+            #tags = db.get_tags(consult["consult_id"])
+            HTMLtags = ""
+            for tag in consult["tags"]:
+                HTMLtags = HTMLtags + '<li class="tag"><a class="competence-tag-link" href="/search?query=' + tag + '">'+ tag+'</a></li>'
+
+            end = '</ul></div><div class="description">'+consult["description"]+'</div> <div class="result-location"><img class="location-tag"src="https://flyclipart.com/thumb2/location-pin-emoji-934877.png">' + \
+                  consult["location"] + '</div></div></li>'
+            finalHTML = finalHTML + start + HTMLtags + end;
+        return finalHTML
+    else:
         start = '<li class="entity-result"> <div class="searchResult"> <div class="result-img"> <img class="profile-img"src="' + \
-                consult[4] + '"> </div> <div class="result-name">' + consult[1] +' '+ consult[2] + '</div> <div class="result-role">' + consult[3] + '</div> <div class="table"> <ul class="result-tags-list">'
-        tags = db.get_tags(consult[0])
+                data["image_url"] + '"> </div> <div class="result-name"><a href="/profile?id='+str(data["consult_id"])+'">' + data["firstname"] +' '+ data["lastname"] + '</a></div> <div class="result-role">' + data["role"] + '</div> <div class="table"> <ul class="result-tags-list">'
+            #tags = db.get_tags(consult["consult_id"])
         HTMLtags = ""
-        for tag in tags:
-            HTMLtags = HTMLtags + '<li class="tag">' + tag[0] + '</li>'
+        for tag in data["tags"]:
+            HTMLtags = HTMLtags + '<li class="tag"><a class="competence-tag-link" href="/search?query=' + tag + '">'+ tag+'</a></li>'
 
-        end = '</ul></div><div class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam ligula urna,pharetra id accumsan sit amet, congue sed erat. Integer sed finibus enim. Donec sit amet bibendumsapien. </div> <div class="result-location"><img class="location-tag"src="https://flyclipart.com/thumb2/location-pin-emoji-934877.png">' + \
-              consult[5] + '</div></div></li>'
+        end = '</ul></div><div class="description">'+data["description"]+'</div> <div class="result-location"><img class="location-tag"src="https://flyclipart.com/thumb2/location-pin-emoji-934877.png">' + \
+                  data["location"] + '</div></div></li>'
         finalHTML = finalHTML + start + HTMLtags + end;
-    return finalHTML
-
+        return finalHTML
 
 
 def build_tags():
     tags = db.get_all_tags()
     html_tags = ""
     for tag in tags:
-        html_tags = html_tags + '<option value = "'+tag[0]+'"> '+tag[0]+' </ option>'
+        html_tags = html_tags + '<option value = "'+str(tag[0])+'"> '+str(tag[0])+' </ option>'
     return html_tags
+
+
+
+

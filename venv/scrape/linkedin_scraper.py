@@ -1,3 +1,4 @@
+import csv
 import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -26,8 +27,8 @@ def debug():
     get_profile_info(profile_url_list)
 
 def login():
-    user = ""
-    password = ""
+    user = "f"
+    password = "S"
     driver.get('https://www.linkedin.com/login/')
     if "signup" not in driver.current_url:
         driver.find_element('xpath','//*[@id="username"]').send_keys(user)#send in username to username field
@@ -82,7 +83,7 @@ def get_profile_info(list):
         split_name = full_name.split(" ",1)
         first_name = split_name[0]
         last_name = split_name[1:]
-        img_url = driver.find_element('xpath','//img[contains(@title, "'+full_name+'")]').get_attribute('src')
+        img_url = driver.find_element('xpath','//img[contains(@title, "'+first_name+'")]').get_attribute('src')
         if "data:image" in img_url:
             img_url = "https://microbiology.ucr.edu/sites/default/files/styles/form_preview/public/blank-profile-pic.png?itok=4teBBoet"
         title = driver.find_element('xpath', '//div[@class="text-body-medium break-words"]').get_attribute('innerText').split(" at")
@@ -146,5 +147,22 @@ if __name__ == '__main__':
         profile_url_list.extend(temp_profile_list)  # add lists together
     print("profile url length "+str(len(profile_url_list)))
     profiles = get_profile_info(profile_url_list)
+
+    #save profiles to CSV instead so i dont have to run this script over each time during debugging
+    try:
+        with open('profiles.csv', 'w+', newline='') as profile_csv:
+            fieldnames = ['firstname', 'lastname', 'role', 'image_url', 'location', 'description']
+            profile_writer = csv.DictWriter(profile_csv, fieldnames=fieldnames)
+            writer.writeheader()
+            with open('tags.csv', 'w+', newline='') as tags_csv:
+                tag_fieldnames ['tag','consult_id']
+                tag_writer = csv.DictWriter(tags_csv, fieldnames=tag_fieldnames)
+                for row in profiles:
+                    writer.writerow({'firstname': row[1], 'lastname':row[2],'role':row[3],'image_url':row[4],'location':row[5],'description':row[6]})
+                    for tagrow in profiles[-1]:
+                        tag_writer.writerow({'tag':tagrow, 'consult_id':row[0]})
+    except:
+        print("some error in writer")
+
     print("Number of profiles saved:"+str(len(profiles)))
     db.add_consultants_to_db(profiles)
