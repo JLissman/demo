@@ -67,31 +67,55 @@ def get_all_tags():
     close_connection(connection)
     return allTags
 
-
-
-
-def search_db(*queries):
+def get_all_names():
     connection = get_connection()
     cursor = connection.cursor()
-    print("QUERIES")
-    print(queries)
-    for query in queries[0]:
-        cursor.execute("SELECT * FROM consult WHERE '"+query+"' IN (firstname, lastname, role, location);")
-        consult_results = cursor.fetchall()
-        cursor.execute("SELECT id FROM tags WHERE '"+query+"' LIKE (tag)")
-        tags_ids = cursor.fetchall()
-        for tag_id in tags_ids:
-            cursor.execute("SELECT consult_id from consult_tags WHERE tag_id = '"+str(tag_id[0])+"'")
-            tags_consult_ids = cursor.fetchall()
-            for consult_id in tags_consult_ids:
-                cursor.execute("SELECT * FROM consult WHERE id = '" + str(consult_id[0]) + "'")
-                consult = cursor.fetchall()
-                consult_results = consult_results + consult
-
-
+    cursor.execute("SELECT firstname, lastname FROM  consult")
+    allNames = cursor.fetchall()
     close_connection(connection)
-    return consult_results
+    return allNames
 
+
+def get_all_locations():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT DISTINCT location FROM  consult")
+    allLocations = cursor.fetchall()
+    close_connection(connection)
+    return allLocations
+
+def get_all_roles():
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT DISTINCT role FROM  consult")
+    allRoles = cursor.fetchall()
+    close_connection(connection)
+    return allRoles
+
+
+#################### old
+#def search_db(*queries):
+#    connection = get_connection()
+#    cursor = connection.cursor()
+#    print("QUERIES")
+#    print(queries)
+#    for query in queries[0]:
+#        cursor.execute("SELECT * FROM consult WHERE '"+query+"' IN (firstname, lastname, role, location);")
+#        consult_results = cursor.fetchall()
+#        cursor.execute("SELECT id FROM tags WHERE '"+query+"' LIKE (tag)")
+#        tags_ids = cursor.fetchall()
+#        for tag_id in tags_ids:
+#            cursor.execute("SELECT consult_id from consult_tags WHERE tag_id = '"+str(tag_id[0])+"'")
+#            tags_consult_ids = cursor.fetchall()
+#            for consult_id in tags_consult_ids:
+#                cursor.execute("SELECT * FROM consult WHERE id = '" + str(consult_id[0]) + "'")
+#                consult = cursor.fetchall()
+#                consult_results = consult_results + consult
+#
+#
+#    close_connection(connection)
+#    return consult_results
+####################
 
 def search_multiple(*args):
     connection = get_connection()
@@ -120,6 +144,36 @@ def search_multiple(*args):
 
     close_connection(connection)
     return results
+
+def search_multiple_v2(*args):
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+    query = "SELECT DISTINCT consult_id, firstname, lastname, role, image_url, location, description FROM consultants.consult_tags LEFT JOIN tags on consult_tags.tag_id = tags.id LEFT JOIN consult on consult_tags.consult_id = consult.id "
+    for arg in args[0]:
+        if arg == args[0][0]:
+            #first
+            query = query + "WHERE '"+str(arg)+"' in (firstname, lastname, role, location, tag) "
+        elif arg == args[0][-1]:
+            #last
+            query = query + "OR '"+str(arg)+"' in (firstname, lastname, role, location, tag);"
+        else:
+            query = query + "OR '"+str(arg)+"' in (firstname, lastname, role, location, tag) "
+    cursor.execute(query)
+    results = cursor.fetchall()
+    #add tags to each profile and convert result dictionary to new dictionary using consult id as key
+    resultDict = {}
+    tupleCursor = connection.cursor()
+    for profile in results:
+        tupleCursor.execute("SELECT tag FROM tags INNER JOIN consult_tags on consult_tags.tag_id = tags.id WHERE consult_id = '"+str(profile["consult_id"])+"'")
+        tags = tupleCursor.fetchall()
+        resultDict[profile["consult_id"]] = {"name":profile["firstname"]+" "+profile["lastname"],"role":profile["role"], "location":profile["location"],"image_url":profile["image_url"],"description":profile["description"], "tags":[]}
+        #resultDict[profilePos]["tags"] = []
+        for tag in tags:
+            resultDict[profile["consult_id"]]["tags"].append(tag[0])
+
+    close_connection(connection)
+    return resultDict
+
 
 
 def get_tags(id):

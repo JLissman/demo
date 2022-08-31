@@ -7,15 +7,18 @@
     <title>Competence Finder</title>
     <script src="{{ url_for('static', filename='js/searchtags.js') }}" defer></script>
 
+
+</head>
+<body>
     <div class="topmenu">
         <a class="active" href="/home">Home</a>
         <a href="allaKonsulter.html">All Consultants</a>
-        <a href="search">Avanced Seach</a>
+        <a href="search">Avanced Search</a>
         <div id="userName">Logged in as:<br><img id="profile_image" width="50px" height="50px" src={{session['image']}}> {{session['name']}}</div>
         <a href="logout">Log out</a>
 
         <form id="searchForm" action="search" autocomplete="off">
-        <input name="query" id="search" type="text" list="programmingLanguages" class="input" href="search" placeholder="Search">
+        <input name="query" id="search" type="text" list="programmingLanguages" placeholder="Search">
             <datalist id="programmingLanguages">
                 {{programmingLanguages|safe}}
                 </datalist></form>
@@ -24,18 +27,8 @@
     <div id="searchtags-container">
 
     </div>
-</head>
-<body onload="search()">
 <div id="textcontainer"></div>
 <div id="results-container"></div>
-
-  <script>
-    function search() {
-      if ("{{ search }}" == "True") {
-          document.getElementById("textcontainer").innerHTML = "<h1>Searching for "+"{{ keywords}}</h1>";
-      }
-    }
-  </script>
 
 
 

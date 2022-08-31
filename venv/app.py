@@ -42,14 +42,41 @@ def searchresults():
             searchString = arguments.replace(",", " & ")
         else:
             searchString = arguments
-        consultants = db.search_multiple(queryList)
-        consultantsChecked = checkSearch(queryList, consultants)
-        consultantsHTML = build.build_consultants(consultantsChecked)
-        return render_template('search.html', keywords="Searching for "+searchString, data=consultantsHTML, programmingLanguages=programmingTags)
+
+        consultants = db.search_multiple_v2(queryList)
+        print(len(consultants))
+        consultantsChecked = checkSearch_v2(queryList, consultants)
+        print(len(consultantsChecked))
+        consultantsHTML = build.build_consultants_v2(consultantsChecked)
+        return render_template('search.html', keywords="Your search for: "+searchString+" Returned "+str(len(consultantsChecked))+" Result(s)", data=consultantsHTML, programmingLanguages=programmingTags)
     else:
         consultants = db.get_all_consultants()
         consultantsHTML = build.build_consultants(consultants)
         return render_template('search.html',keywords="Do a search for more specific results", data=consultantsHTML, programmingLanguages=programmingTags)
+
+
+@app.route("/advSearch")
+@login_is_required
+def advanced_search():
+    programmingTags = build.build_tags()
+    nameList = build.build_names()
+    locationList = build.build_locations()
+    titleList = build.build_roles()
+    arguments = request.args
+    if arguments is not None:
+        name = arguments.get('nam')
+        location = arguments.get('loc') #OR
+        title = arguments.get('tit')
+        tags = arguments.get('tag')
+        print(name, location, title, tags)
+        return render_template('advancedSearch.html', programmingLanguages=programmingTags,nameList=nameList,locationList=locationList, titleList = titleList)
+    else:
+        return render_template('advancedSearch.html', programmingLanguages=programmingTags,nameList=nameList,locationList=locationList, titleList = titleList)
+
+@app.route("/test")
+def test():
+
+    return str(db.search_multiple_v2(["test"]))
 
 
 @app.route("/testdb")
@@ -84,6 +111,20 @@ def checkSearch(queryList, dataList):
                 print("profile: "+str(profile["consult_id"])+": "+query+" is in "+str(tags_lower))
     return res
 
+def checkSearch_v2(queryList, dataList):
+    res = copy.deepcopy(dataList)
+    for id in dataList:
+        for query in queryList:
+            tags_lower = []
+            for tag in dataList[id]["tags"]:
+                tags_lower.append(tag.lower())
+            if (query.lower() not in tags_lower and (query.lower() not in dataList[id]["name"]  or query.lower() not in dataList[id]["role"] or query.lower() not in dataList[id]["location"])):
+                if id in res:
+                    del res[id]
+            else:
+                pass
+                print("profile: "+str(id)+": "+query+" is in "+str(tags_lower))
+    return res
 
 
 if __name__ == '__main__':
