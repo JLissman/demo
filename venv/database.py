@@ -204,27 +204,20 @@ def add_consultants_to_db(list_to_add):
     connection = get_connection()
     cursor = connection.cursor()
     for profile in list_to_add:
-        #doublecheck that profile doesnt exist
-        print("PROFILE:")
-        #print(profile[0]+"' and lastname = '"+profile[1][0]+"' and role = '"+profile[2]+"' and location = '"+profile[4])
+        #check that profile doesnt exist
         cursor.execute("SELECT id from consult where firstname = '"+profile[0]+"' and lastname = '"+profile[1][0]+"' and role = '"+profile[2]+"' and location = '"+profile[4]+"';")
         result = cursor.fetchall()
-        print("add_consultants_to_db result var")
-        print(len(result))
-        print(result)
         if(len(result) == 0):
             cursor.execute("INSERT INTO consult (firstname, lastname, role, image_url, location, description) VALUES('"+profile[0]+"','"+profile[1][0]+"','"+profile[2]+"','"+profile[3]+"','"+profile[4]+"','"+profile[5]+"');")
             connection.commit()
             cursor.execute("SELECT id from consult where firstname = '"+profile[0]+"' and lastname = '"+profile[1][0]+"' and role = '"+profile[2]+"' and image_url = '"+profile[3]+"' and location = '"+profile[4]+"' and description = '"+profile[5]+"';")
             consult_id = cursor.fetchall()
-            print("add_consult_to_db consult_id after its been added to DB")
             add_tags_to_db(profile[6])
             tag_id_list = []
             for tag in profile[6]:
                 cursor.execute("SELECT id FROM tags WHERE tag = '"+tag+"'")
                 tag_id = cursor.fetchone()
                 if tag_id is not None:
-                    print("consult_tag connection does not exist")
                     connect_consult_to_tag(consult_id, tag_id)
         else:
             print("Consult "+str(profile)+" already exists in database")
@@ -246,11 +239,6 @@ def add_tags_to_db(list_of_tags):
 def connect_consult_to_tag(consult_id, tag_id):
     connection = get_connection()
     cursor = connection.cursor()
-    #check if connection exists
-    print("debug")
-    print("connect consult to tag")
-    print("consult_id "+str(consult_id))
-    print("tag_id "+str(tag_id))
 
     #convert variables from list in tuple to string
     consult_id = str(consult_id[0][0])
@@ -273,3 +261,8 @@ def connect_consult_to_tag(consult_id, tag_id):
     else:
         print("connection between tag_id "+tag_id+" and consult_id "+consult_id+" already exists")
     close_connection(connection)
+
+
+
+def add_consult(consult):
+    pass

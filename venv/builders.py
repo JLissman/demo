@@ -2,7 +2,7 @@ import database as db
 
 
 
-
+#old - keeping just in case
 def build_consultants(data):
     finalHTML = ""
     print(data)
@@ -33,11 +33,12 @@ def build_consultants(data):
         finalHTML = finalHTML + start + HTMLtags + end;
         return finalHTML
 
+
+
+
 def build_consultants_v2(data):
     finalHTML = ""
-    print(data)
-    print(len(data))
-    if(len(data) > 0):#8 indexes in datalist if only 1
+    if(len(data) > 0):
         for id in data:
             start = '<li class="entity-result"> <div class="searchResult"> <div class="result-img"> <img class="profile-img"src="' + \
                     data[id]["image_url"] + '"> </div> <div class="result-name"><a href="/profile?id='+ str(id) +'">' + data[id]["name"] + '</a></div> <div class="result-role">' + data[id]["role"] + '</div> <div class="table"> <ul class="result-tags-list">'

@@ -73,17 +73,17 @@ def advanced_search():
     else:
         return render_template('advancedSearch.html', programmingLanguages=programmingTags,nameList=nameList,locationList=locationList, titleList = titleList)
 
-@app.route("/test")
-def test():
-
-    return str(db.search_multiple_v2(["test"]))
-
 
 @app.route("/testdb")
 @login_is_required
 def dbtest():
     return db.test_connection()
 
+
+@app.route("/test")
+def test():
+
+    return
 
 
 @app.route("/profile")
@@ -95,7 +95,7 @@ def profile():
     consult = db.get_consult_by_id(id)
     return render_template('profile.html', consult=consult, programmingLanguages=programmingTags)
 
-
+#old - keeping just in case something with v2 breaks
 def checkSearch(queryList, dataList):
     res = copy.deepcopy(dataList)
     for profile in dataList:

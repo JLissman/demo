@@ -161,7 +161,8 @@ if __name__ == '__main__':
                     writer.writerow({'firstname': row[1], 'lastname':row[2],'role':row[3],'image_url':row[4],'location':row[5],'description':row[6]})
                     for tagrow in profiles[-1]:
                         tag_writer.writerow({'tag':tagrow, 'consult_id':row[0]})
-    except:
+    except e:
+        print(e)
         print("some error in writer")
 
     print("Number of profiles saved:"+str(len(profiles)))
