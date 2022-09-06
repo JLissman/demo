@@ -80,6 +80,9 @@ def callback():
     session["image"] = id_info.get("picture")
     session["google_id"] = id_info.get("sub")  #defing the results to show on the page
     session["name"] = id_info.get("name")
+    if(session["google_id"]=="106366791363086742099"):
+        print("admin logged on")
+        session["admin"] = 1
     return redirect("/home")  #the final page where the authorized users will end up
 
 #@app.route("/logout")  #the logout page and function

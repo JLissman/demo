@@ -21,13 +21,13 @@ def extractProfilePictureFromPDF(file, fullName):
             image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
 
             for x in range(1,3):
-                adesso_image = Image.open('adesso_'+str(x)+".png").convert('RGB')
+                adesso_image = Image.open('C:/Users/Jonathan/PycharmProjects/demo/venv/cvReader/adesso_'+str(x)+".png").convert('RGB')
                 diff_adesso = ImageChops.difference(image, adesso_image).getbbox()
 
-                scout_image = Image.open('scout_' + str(x) + ".png").convert('RGB')
+                scout_image = Image.open('C:/Users/Jonathan/PycharmProjects/demo/venv/cvReader/scout_' + str(x) + ".png").convert('RGB')
                 diff_scout = ImageChops.difference(image, scout_image).getbbox()
                 if(diff_scout and diff_adesso):
-                    image.save("../static/profilePictures/"+fullName+".jpg")
+                    image.save("C:/Users/Jonathan/PycharmProjects/demo/venv/static/profilePictures/"+fullName+".jpg")
 
 
 

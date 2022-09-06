@@ -4,7 +4,7 @@ import re
 import glob
 import os
 import csv
-from image_extraction import extractProfilePictureFromPDF as saveImage
+from cvReader.image_extraction import extractProfilePictureFromPDF as saveImage
 import aspose.words as aw
 
 
@@ -79,7 +79,7 @@ def getLocation(content):
 
 
 def checkFolder():
-    folderPath = ("../cvReader/cvs/*")#../cvReader/cvs/*.pdf
+    folderPath = ("C:/Users/Jonathan/PycharmProjects/demo/venv/cvReader/cvs/*")#../cvReader/cvs/*.pdf
     fileNames = [os.path.relpath(x) for x in glob.glob(folderPath)]
     return fileNames
 
@@ -87,7 +87,7 @@ def checkFolder():
 
 def loadCSV():
     result = []
-    with open('../cvReader/checkedPeople.csv', 'r') as csvFile:
+    with open('C:/Users/Jonathan/PycharmProjects/demo/venv/cvReader/checkedPeople.csv', 'r') as csvFile:
         reader = csv.reader(csvFile)
         for row in reader:
             result.append(row)
@@ -95,7 +95,7 @@ def loadCSV():
 
 
 def writeCSV(data):
-    with open('../cvReader/checkedPeople.csv', 'a', newline='') as file:
+    with open('C:/Users/Jonathan/PycharmProjects/demo/venv/cvReader/checkedPeople.csv', 'a', newline='') as file:
         writer = csv.writer(file, delimiter='\n', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerow(data)
 
@@ -112,10 +112,10 @@ def purpleScoutCV(cv):
 def adessoCV(cv):
     pass
 
-if __name__ == '__main__':
+def cvReader():
     fileNames = checkFolder()
     checkedFiles = loadCSV()
-
+    profile_list = []
     for file in fileNames:
         if '.docx' in file and file.replace(".docx", ".pdf") not in fileNames:
             print("found docx")

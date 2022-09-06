@@ -1,16 +1,16 @@
 import csv
-import chromedriver_autoinstaller
+#import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 import time
 from bs4 import BeautifulSoup
 import database as db
 
 #auto update chromedriver
-chromedriver_autoinstaller.install()
-driver=webdriver.Chrome()
+
 
 def debug():
     login()
@@ -27,8 +27,13 @@ def debug():
     get_profile_info(profile_url_list)
 
 def login():
-    user = "f"
-    password = "S"
+    global driver
+    options = Options()
+    options.add_argument("--enable-javascript")
+    options.add_argument("--headless")
+    driver = webdriver.Chrome(options=options)
+    user = "facehump_@hotmail.com"
+    password = "Sportlife123"
     driver.get('https://www.linkedin.com/login/')
     if "signup" not in driver.current_url:
         driver.find_element('xpath','//*[@id="username"]').send_keys(user)#send in username to username field
@@ -38,12 +43,14 @@ def login():
             driver.find_element('xpath','//*[@id="ember455"]/button').click()#click skip phonenumber
         except:
             pass
+        print("logged on")
     else:
         print("Waiting 10 seconds and trying again")
         time.sleep(10)
         login()
 
-
+def shutdown():
+    driver.close()
 
 def get_people_from_company_search(url, current_list):
     driver.get(url)
@@ -78,6 +85,7 @@ def get_profile_info(list):
     print("getprofileinfo length")
     print(len(list))
     for profile_url in list:
+        print("Working on "+str(list.index(profile_url))+" of "+str(len(list)))
         driver.get(profile_url)
         full_name = driver.find_element('xpath','//h1[@class="text-heading-xlarge inline t-24 v-align-middle break-words"]').get_attribute('innerText')
         split_name = full_name.split(" ",1)
@@ -138,7 +146,7 @@ def scroll_to_bottom():#scrolls to bottom of page for auto-updating results
         last_height = new_height
 
 
-if __name__ == '__main__':
+def scrapeAndSave():
     login()
     anstalldaSearch = ["https://www.linkedin.com/search/results/people/?currentCompany=%5B%2218358%22%2C%2286140890%22%5D&origin=FACETED_SEARCH&sid=mkZ"]
     profile_url_list = []
@@ -167,3 +175,6 @@ if __name__ == '__main__':
 
     print("Number of profiles saved:"+str(len(profiles)))
     db.add_consultants_to_db(profiles)
+    driver.close()
+    return True
+

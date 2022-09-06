@@ -1,11 +1,12 @@
 # app.py
 import os
 import sys
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify, url_for
 import database as db
 from login_app import index_page, login_page, callback_page, logout_page, login_is_required
 import builders as build
 import copy
+from tasks import runLinkedinScraper, checkWorker, runcvReader
 
 #root paths and settings
 sys.path.insert(0, os.path.dirname(__file__))
@@ -15,12 +16,13 @@ app = Flask(__name__, template_folder=template_path)
 app.static_folder = 'static'
 app = Flask("Competence_Finder")
 app.secret_key = "4179" #it is necessary to set a password when dealing with OAuth 2.0
-
-#register blueprints from login_app.py
+app.config['UPLOAD_FOLDER'] = app.static_folder + "/cv"
+#register blueprints
 app.register_blueprint(index_page)
 app.register_blueprint(login_page)
 app.register_blueprint(callback_page)
 app.register_blueprint(logout_page)
+
 
 
 @app.route("/home")
@@ -82,8 +84,7 @@ def dbtest():
 
 @app.route("/test")
 def test():
-
-    return
+    return checkWorker()
 
 
 @app.route("/profile")
@@ -94,6 +95,38 @@ def profile():
     id = request.args.get('id')
     consult = db.get_consult_by_id(id)
     return render_template('profile.html', consult=consult, programmingLanguages=programmingTags)
+
+
+@app.route("/admin")
+@login_is_required
+def admin():
+    return render_template('admin.html')
+
+
+
+@app.route('/admin/linkedin', methods=['POST'])
+@login_is_required
+def linkedinScrape():
+    task = runLinkedinScraper.delay()
+    print("starting linkedinscraper task with id:"+str(task.id))
+    return "starting linkedin scraper"
+
+
+@app.route('/admin/cv/reader', methods=['POST'])
+@login_is_required
+def cvReader():
+    task = runcvReader.delay()
+    print("starting cvreader task with id: "+str(task.id))
+    #TODO: better return value - should we even have returnvalue? maybe check status with JS and change button??
+    return "starting CV READER"
+
+@app.route('/admin/cv/upload',methods = ['POST'])
+@login_is_required
+def uploadCV():
+        f = request.files['file']
+        f.save(secure_filename(f.filename))
+        return 'file uploaded successfully'
+
 
 #old - keeping just in case something with v2 breaks
 def checkSearch(queryList, dataList):
@@ -129,3 +162,4 @@ def checkSearch_v2(queryList, dataList):
 
 if __name__ == '__main__':
     app.run(debug=True)
+    #celery -A tasks worker -l info -P gevent -n linkedin

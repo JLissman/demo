@@ -1,0 +1,2 @@
+add functionality to add to database
+add functionality to read adesso CVS
