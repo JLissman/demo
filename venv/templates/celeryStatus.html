@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admintools - Celerystatus</title>
+</head>
+<body>
+{% if session["admin"] == 1 %}
+{% if celeryStatus["availability"] == None %}
+    <form action="celeryStatus"  method="post">
+        <button id="celeryStartButton" name="action" value="start" type="submit">Start Celery Worker</button>
+        </form>
+{% else %}
+    <form action="celeryStatus"  method="post">
+        <button id="celeryStopButton" name="action" value="end">Kill Celery Worker</button>
+        </form>
+    {% endif %}
+   <div id="celeryStatus">
+
+        <div id="celeryAvailability"><p>Availability : {{celeryStatus["availability"]}}</p></div>
+
+            <div id="celeryRegisteredTasks">Registered tasks: {{ celeryStatus["registered_tasks"] }}
+            </div>
+            <div id="celeryActiveTasks">Active tasks: {% if celeryStatus["active_tasks"]["celery@linkedin"] %}</div>
+                    <div id="Task id">Task id: {{celeryStatus["active_tasks"]["celery@linkedin"]["id"]}}</div>
+                    <div id="task_name">Task name: {{celeryStatus["active_tasks"]["celery@linkedin"]["name"]}}</div>
+                            {% else %}
+                            {{celeryStatus["active_tasks"]}}
+                    {% endif %}
+            <div id="celeryScheduledTasks">Scheduled tasks: {{celeryStatus["scheduled_tasks"]}}</div>
+            <div id="celeryStats"><p>Stats: {{celeryStatus["stats"]}}</p></div>
+
+            </div>
+
+<script>
+let startbutton = document.getElementById('celeryStartButton');
+let endbutton = document.getElementById('celeryStopButton');
+
+
+if(startbutton != null){
+startbutton.addEventListener('click', (event) => {
+    if(startbutton.innerText == "Starting..."){
+        event.preventDefault()
+        console.log("second start click")
+    }
+    else if(startbutton.innerText == "Start Celery Worker"){
+    console.log("first start click")
+    startbutton.innerText = "Starting..."
+    }
+});}
+if(endbutton != null){
+endbutton.addEventListener('click', (event) =>{
+    if(endbutton.innerText == "Stopping..."){
+        event.preventDefault()
+        console.log("second end click")
+    }
+    else if(endbutton.innerText == "Kill Celery Worker"){
+        endbutton.innerText="Stopping..."
+        console.log("first end click")
+    }
+
+
+});}
+</script>
+{% endif %}
+</body>
+</html>

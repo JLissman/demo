@@ -39,3 +39,42 @@ def runcvReader():
 def checkWorker():
     i = app.control.inspect()
     return i.active()
+
+
+
+def getWorkerStatus():
+    i = app.control.inspect()
+    status = {}
+    status["active"] = i.active()
+    status["scheduled"] = i.scheduled()
+    status["qued"] = i.reserved()
+
+    return status
+
+
+def get_celery_worker_status():
+    i = app.control.inspect()
+    availability = i.ping()
+    stats = i.stats()
+    registered_tasks = i.registered()
+    active_tasks = i.active()
+    scheduled_tasks = i.scheduled()
+    result = {
+        'availability': availability,
+        'stats': stats,
+        'registered_tasks': registered_tasks,
+        'active_tasks': active_tasks,
+        'scheduled_tasks': scheduled_tasks
+    }
+    return result
+
+
+def startWorker():
+    print("starting worker")
+    #app.worker_main(argv=['worker', '--loglevel=info', "-n", "linkedin",'--without-gossip'])
+    startCommand = "celery -A tasks worker -l info -P gevent -n linkedin"
+    os.system('start cmd /c '+startCommand)
+
+def killAllWorkers():
+    #app.worker_main(argv=['-A', 'taks', 'control', 'shutdown'])
+    os.system('cmd /c "celery -A tasks control shutdown"')

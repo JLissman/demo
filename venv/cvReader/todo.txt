@@ -1,2 +1,10 @@
-add functionality to add to database
-add functionality to read adesso CVS
+CVREADER: add functionality to add to database
+CVREADER: add functionality to read adesso CVS
+LINKEDIN: double check that it works correctly with CELERY (trunc table and rerun)
+
+CELERY: Add backend to get status logs
+
+
+
+
+CSS: basically all fucking CSS

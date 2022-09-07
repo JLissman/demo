@@ -6,8 +6,8 @@ import database as db
 from login_app import index_page, login_page, callback_page, logout_page, login_is_required
 import builders as build
 import copy
-from tasks import runLinkedinScraper, checkWorker, runcvReader
-
+import tasks as task
+from werkzeug.utils import secure_filename
 #root paths and settings
 sys.path.insert(0, os.path.dirname(__file__))
 project_root = os.path.dirname(__file__)
@@ -16,7 +16,7 @@ app = Flask(__name__, template_folder=template_path)
 app.static_folder = 'static'
 app = Flask("Competence_Finder")
 app.secret_key = "4179" #it is necessary to set a password when dealing with OAuth 2.0
-app.config['UPLOAD_FOLDER'] = app.static_folder + "/cv"
+app.config['UPLOAD_FOLDER'] = app.static_folder + "\\cvReader\\cvs"
 #register blueprints
 app.register_blueprint(index_page)
 app.register_blueprint(login_page)
@@ -97,52 +97,56 @@ def profile():
     return render_template('profile.html', consult=consult, programmingLanguages=programmingTags)
 
 
-@app.route("/admin")
+
+#admintools
+@app.route("/admin", methods=['POST', 'GET'])
 @login_is_required
 def admin():
-    return render_template('admin.html')
+    #check whats running
+    linked = 0
+    cvreader = 0
+    consultants = db.get_all_consultants()
+    if request.method == 'POST' and request.form["action"] ==  'linkedin':
+        task.runLinkedinScraper.delay()
+        print("debug start linkedin")
+        linked = 1
+    elif request.method == 'POST' and request.form["action"] == 'cvreader':
+        #task.cvReader()
+        print("debug start cvreader")
+        cvreader = 1
 
+    return render_template('admin.html', linked=linked, cvreader=cvreader, consultants=consultants)
 
-
-@app.route('/admin/linkedin', methods=['POST'])
+#admintools
+@app.route('/admin/celeryStatus', methods=['POST', 'GET'])
 @login_is_required
-def linkedinScrape():
-    task = runLinkedinScraper.delay()
-    print("starting linkedinscraper task with id:"+str(task.id))
-    return "starting linkedin scraper"
+def celeryStatusPage():
+    if request.method=='POST' and request.form["action"] == 'start':
+        task.startWorker()
+        celery = task.get_celery_worker_status()
+        while celery['availability'] is None:
+            celery = task.get_celery_worker_status()
+        return render_template('celeryStatus.html', celeryStatus=celery)
+    elif request.method == 'POST' and request.form["action"] == 'end':
+        task.killAllWorkers()
+        celery = task.get_celery_worker_status()
+        while celery['availability'] != None:
+            celery = task.get_celery_worker_status()
+        return render_template('celeryStatus.html', celeryStatus=celery)
+    else:
+        celery = task.get_celery_worker_status()
+        return render_template('celeryStatus.html', celeryStatus=celery)
 
 
-@app.route('/admin/cv/reader', methods=['POST'])
-@login_is_required
-def cvReader():
-    task = runcvReader.delay()
-    print("starting cvreader task with id: "+str(task.id))
-    #TODO: better return value - should we even have returnvalue? maybe check status with JS and change button??
-    return "starting CV READER"
-
+#admintools change route / bake into admin route?
 @app.route('/admin/cv/upload',methods = ['POST'])
 @login_is_required
 def uploadCV():
         f = request.files['file']
-        f.save(secure_filename(f.filename))
+        filename = secure_filename(f.filename)
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return 'file uploaded successfully'
 
-
-#old - keeping just in case something with v2 breaks
-def checkSearch(queryList, dataList):
-    res = copy.deepcopy(dataList)
-    for profile in dataList:
-        for query in queryList:
-            tags_lower = []
-            for tag in profile["tags"]:
-                tags_lower.append(tag.lower())
-            if (query.lower() not in tags_lower and (query.lower() not in profile["firstname"] or query.lower() not in profile["lastname"] or query.lower() not in profile["role"] or query.lower() not in profile["location"])):
-                if profile in res:
-                    res.remove(profile)
-            else:
-                pass
-                print("profile: "+str(profile["consult_id"])+": "+query+" is in "+str(tags_lower))
-    return res
 
 def checkSearch_v2(queryList, dataList):
     res = copy.deepcopy(dataList)
@@ -162,4 +166,4 @@ def checkSearch_v2(queryList, dataList):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    #celery -A tasks worker -l info -P gevent -n linkedin
+

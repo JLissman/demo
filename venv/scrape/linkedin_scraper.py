@@ -32,7 +32,7 @@ def login():
     options.add_argument("--enable-javascript")
     options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
-    user = "facehump_@hotmail.com"
+    user = "fac"
     password = "Sportlife123"
     driver.get('https://www.linkedin.com/login/')
     if "signup" not in driver.current_url:

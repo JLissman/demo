@@ -9,7 +9,7 @@
 
 
 </head>
-<body>
+<frame>
     <div class="topmenu">
         <a href="/home">Home</a>
         <a href="search">All Consultants</a>
@@ -30,18 +30,73 @@
 
     </div>
 {% if session["admin"] == 1 %}
+    <div id="autoTools">
+        <div id="workerstatus"><p>Auto Tools</p></div>
+    {% if linked == 0 %}
+        <form action="admin" method="post">
+        <button name="action" value="linkedin">Start Linkedin Scraper</button>
+        </form>
+    {% else %}
+        <button>Linkedin Scraper is running</button>
+    {% endif %}
 
-    <form action="admin/linkedin" method="post">
-    <button name="foo" value="upvote">Linkedin</button>
-    </form>
-    <form action="/admin/cv/reader" method="post">
-        <button name="cvreaderButton">Start CV Reader</button>
-    </form>
-    <form action = "/admin/cv/upload" method = "POST"
+    {% if cvreader == 0 %}
+        <form action="admin" method="post">
+        <button name="action" value="cvreader">Start CV Reader</button>
+        </form>
+        <form action = "/admin/cv/upload" method = "POST"
          enctype = "multipart/form-data">
          <input type = "file" name = "file" accept=".docx, .pdf"/>
          <input type = "submit"/>
       </form>
+    {% else %}
+        <button>CvReader is running</button>
+    {% endif %}
+
+
+<label for="celeryStatus">Worker Status (long loading)</label>
+    <iframe height="20%" id="celeryStatus" src="/admin/celeryStatus"></iframe>
+    </div>
+
+
+
+
+    <label for="addNewConsult">Add new consult</label>
+    <form id="addNewConsultForm" action="admin" method="post">
+        <input type="text" name="name" placeholder="Name">
+        <input type="text" name="role" placeholder="Role">
+        <input type="text" name="location" placeholder="Location">
+        <input type="file" name="profilePicture" accept=".jpg, .png">
+        <input type="text" name="description" placeholder="Description">
+        <input type="text" name="tags" placeholder="Tags">
+    </form>
+    <label for="removeConsult">Remove Consult</label>
+    <form id="removeConsult" action="admin/remove" method="post">
+        <input id="removeConsultInput" type="text" name="searchField">
+        <button type="submit">Remove consult</button>
+
+    </form>
+    <label for="tagChange">Add / remove Tag</label>
+    <form id="tagChange">
+        <select id="tagOption">
+            <option name="removeTag">Remove Tag</option>
+            <option name="Add tag">Add Tag</option>
+        </select>
+        <input text="text" name="tag" placeholder="Tagname">
+
+    </form>
+
+    <script>
+    let consultants = {{consultants}}
+    removeConsultInput = document.getElementById('removeConsultInput')
+    console.log(consultants)
+    eventTriggers = ["keyup", "keydown"]
+    eventTriggers.forEach(function(e){
+        removeConsultInput.addEventListener(e,(event) =>{
+
+        }
+    })
+    </script>
     {% endif %}
 
 
