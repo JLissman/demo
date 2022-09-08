@@ -41,7 +41,7 @@ eventTriggers.forEach(function(e){
             event.preventDefault()
             var input = inputfield.value.toLowerCase()
             if(optionNames.includes(input)){
-                addTag(input)
+                addTag(input,'searchtags-container')
                 inputfield.value = ""
                 inputfield.placeholder = "Search for tag"
             }
@@ -55,26 +55,43 @@ eventTriggers.forEach(function(e){
 });
 
 
-function addTag(tag){
+function addTag(tag, elementId){
+    tagContainer = document.getElementById(elementId);
     if(tag.length != 0){
     const index = tags.indexOf(tag)
     if(index == -1){
         console.log("adding tag "+tag)
-        container.innerHTML = container.innerHTML + "<div class='searchtag'>"+ tag +"<a href='#' class='removetag' onclick='removeTag(this)'>&#215;</a></div>"
-        tags.push(tag)
+        tagContainer.innerHTML = tagContainer.innerHTML + "<div class='searchtag'>"+ tag +"<a href='#' class='removetag' onclick='removeTag(this)'>&#215;</a></div>"
+        if(elementId == 'searchtags-container'){
+        tags.push(tag)}
+        else if (elementId=='addTagsContainer'){
+        addConsultTagList.push(tag)
+        }
     }
     else{
     console.log(tag+" already in list")
     }
+
 }}
 
 function removeTag(tag){
     tagName = tag.parentElement.innerText.slice(0, -1)
+    parent = tag.parentElement.parentElement.id
+    console.log(parent)
+    tagContainer = document.getElementById(parent);
+    if(parent == 'searchtags-container'){
     const index = tags.indexOf(tagName);
     if (index > -1) {
+
         tags.splice(index, 1)
-        container.innerHTML = container.innerHTML.replace(tag.parentElement.outerHTML, "")
+        tagContainer.innerHTML = tagContainer.innerHTML.replace(tag.parentElement.outerHTML, "")
+    }}
+    else if(parent =='addTagsContainer'){
+    const index = addConsultTagList.indexOf(tagName);
+    if (index > -1) {
+        addConsultTagList.splice(index, 1)
+        tagContainer.innerHTML = tagContainer.innerHTML.replace(tag.parentElement.outerHTML, "")
     }
-    console.log(tags.length)
+    }
 
 }

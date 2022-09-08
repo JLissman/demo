@@ -57,22 +57,31 @@
 <label for="celeryStatus">Worker Status (long loading)</label>
     <iframe height="20%" id="celeryStatus" src="/admin/celeryStatus"></iframe>
     </div>
-
-
-
+    <datalist id="tagList">
+        {{programmingLanguages|safe}}
+    </datalist>
 
     <label for="addNewConsult">Add new consult</label>
-    <form id="addNewConsultForm" action="admin" method="post">
-        <input type="text" name="name" placeholder="Name">
-        <input type="text" name="role" placeholder="Role">
-        <input type="text" name="location" placeholder="Location">
-        <input type="file" name="profilePicture" accept=".jpg, .png">
-        <input type="text" name="description" placeholder="Description">
-        <input type="text" name="tags" placeholder="Tags">
+    <form id="addNewConsultForm" action="admin/consult/add" method="post" name="addNewConsult" enctype="multipart/form-data">
+        <input class="addField" type="text" name="name" placeholder="Name">
+        <input class="addField" type="text" name="role" placeholder="Role">
+        <input class="addField" type="text" name="location" placeholder="Location">
+        <input class="addField" type="file" name="profilePicture" accept=".jpg, .png">
+        <input class="addField" type="text" name="description" placeholder="Description">
+        <input id="addNewConsult-tags" class="addField" list="tagList" type="text" name="tags" placeholder="Tags">
+        <div id="addTagsContainer"></div>
+        <button id="submitNewConsult" type="submit">Add new consult</button>
     </form>
     <label for="removeConsult">Remove Consult</label>
-    <form id="removeConsult" action="admin/remove" method="post">
-        <input id="removeConsultInput" type="text" name="searchField">
+    <form id="removeConsult" action="admin/consult/remove" method="post">
+
+        <select id="removeConsultInput" list="consultList" type="text" name="id">
+        <datalist id="consultList">
+            {% for consult_id in consultantsOptions %}
+            <option value="{{consult_id}}">{{consultantsOptions[consult_id]['name']}}, {{consultantsOptions[consult_id]['role']}}, {{consultantsOptions[consult_id]['location']}}</option>
+            {% endfor %}
+        </datalist>
+        </select>
         <button type="submit">Remove consult</button>
 
     </form>
@@ -87,14 +96,40 @@
     </form>
 
     <script>
-    let consultants = {{consultants}}
-    removeConsultInput = document.getElementById('removeConsultInput')
-    console.log(consultants)
-    eventTriggers = ["keyup", "keydown"]
-    eventTriggers.forEach(function(e){
-        removeConsultInput.addEventListener(e,(event) =>{
-
-        }
+    let addConsultTagList=[]
+    eventTriggers = ["keyup","keydown"]
+    let addNewConsultSubmitButton = document.getElementById('submitNewConsult')
+   document.querySelectorAll('.addField').forEach(item => {
+    eventTriggers.forEach(trigger => {
+        item.addEventListener(trigger, event => {
+            if(trigger == "keyup"){
+                event.preventDefault()
+                }
+                else{
+                if(event.key == "Enter"){
+                    event.preventDefault()
+                    if(item.getAttribute('name') == "tags"){
+                        if(optionNames.includes(item.value.toLowerCase())){
+                            addTag(item.value,'addTagsContainer')
+                            item.value = ""
+                            item.placeholder = "Add new tag"
+                            }
+                    else{
+                        item.value = ""
+                        item.placeholder = "Tag not found"
+                        }
+                    }
+                }
+            }
+        })
+        })
+        })
+    addNewConsultSubmitButton.addEventListener('click', (event)=>{
+        console.log(event)
+        event.preventDefault()
+        inputfield = document.getElementById('addNewConsult-tags')
+        addConsultTagList.forEach(e =>inputfield.value = inputfield.value + ", " + e )
+        document.getElementById('addNewConsultForm').submit()
     })
     </script>
     {% endif %}

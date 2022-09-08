@@ -43,13 +43,12 @@ def test_connection():
 def get_all_consultants():
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
-    cursor.execute("SELECT DISTINCT consult_id, firstname, lastname, role, image_url, location, description FROM consultants.consult_tags LEFT JOIN tags on consult_tags.tag_id = tags.id LEFT JOIN consult on consult_tags.consult_id = consult.id ORDER BY firstname ASC;")
+    cursor.execute("SELECT DISTINCT consult.id, firstname, lastname, role, image_url, location, description FROM consultants.consult LEFT JOIN tags on consult.id = tags.id LEFT JOIN consult_tags on consult.id = consult_tags.consult_id ORDER BY firstname ASC")
     allConsultants = cursor.fetchall()
     tupleCursor = connection.cursor()
     for profile in allConsultants:
         tupleCursor.execute(
-            "SELECT tag FROM tags INNER JOIN consult_tags on consult_tags.tag_id = tags.id WHERE consult_id = '" + str(
-                profile["consult_id"]) + "'")
+            "SELECT tag FROM tags INNER JOIN consult_tags on consult_tags.tag_id = tags.id WHERE consult_id = '" + str(profile["id"]) + "'")
         profilePos = allConsultants.index(profile)
         allConsultants[profilePos]["tags"] = []
         tags = tupleCursor.fetchall()

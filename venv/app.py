@@ -16,7 +16,7 @@ app = Flask(__name__, template_folder=template_path)
 app.static_folder = 'static'
 app = Flask("Competence_Finder")
 app.secret_key = "4179" #it is necessary to set a password when dealing with OAuth 2.0
-app.config['UPLOAD_FOLDER'] = app.static_folder + "\\cvReader\\cvs"
+app.config['UPLOAD_FOLDER'] = app.static_folder
 #register blueprints
 app.register_blueprint(index_page)
 app.register_blueprint(login_page)
@@ -106,6 +106,10 @@ def admin():
     linked = 0
     cvreader = 0
     consultants = db.get_all_consultants()
+    cleanConsultants = {}
+    programmingTags = build.build_tags()
+    for consult in consultants:
+        cleanConsultants[consult["id"]]={"name":consult["firstname"]+" "+consult["lastname"],"role":consult["role"],"location":consult["location"],"tags":consult["tags"]}
     if request.method == 'POST' and request.form["action"] ==  'linkedin':
         task.runLinkedinScraper.delay()
         print("debug start linkedin")
@@ -115,7 +119,7 @@ def admin():
         print("debug start cvreader")
         cvreader = 1
 
-    return render_template('admin.html', linked=linked, cvreader=cvreader, consultants=consultants)
+    return render_template('admin.html', linked=linked, cvreader=cvreader, consultantsOptions=cleanConsultants, programmingLanguages=programmingTags)
 
 #admintools
 @app.route('/admin/celeryStatus', methods=['POST', 'GET'])
@@ -137,6 +141,26 @@ def celeryStatusPage():
         celery = task.get_celery_worker_status()
         return render_template('celeryStatus.html', celeryStatus=celery)
 
+#admintools
+@app.route('/admin/consult/delete', methods=['POST'])
+@login_is_required
+def deleteConsult():
+    return "deleting consult with ID:"+str(request.form["id"])
+
+
+@app.route('/admin/consult/add', methods=['POST'])
+@login_is_required
+def addConsult():
+    fullname = request.form["name"].split(" ")
+    firstname = fullname[0]
+    lastname = fullname[1:-1]
+    role = request.form['role']
+    description = request.form['description']
+    image_url = '\\profilePictures\\'+request.files['profilePicture'].filename
+    picture = request.files['profilePicture']
+    uploadPicture(picture)
+    tags = request.form['tags']
+    return request.form
 
 #admintools change route / bake into admin route?
 @app.route('/admin/cv/upload',methods = ['POST'])
@@ -144,7 +168,7 @@ def celeryStatusPage():
 def uploadCV():
         f = request.files['file']
         filename = secure_filename(f.filename)
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        f.save(os.path.join(app.config['UPLOAD_FOLDER']), filename)
         return 'file uploaded successfully'
 
 
@@ -162,6 +186,16 @@ def checkSearch_v2(queryList, dataList):
                 pass
                 print("profile: "+str(id)+": "+query+" is in "+str(tags_lower))
     return res
+
+
+
+def uploadPicture(pic):
+    filename = secure_filename(pic.filename)
+    print(filename)
+    #filename = "\\profilePictures\\"+filename
+    print(filename)
+    pic.save(os.path.join(app.config['UPLOAD_FOLDER']+"\\profilePictures\\"+filename))
+
 
 
 if __name__ == '__main__':
