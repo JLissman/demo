@@ -6,10 +6,10 @@
     <meta charset="UTF-8">
     <title>Competence Finder - Admintools</title>
     <script src="{{ url_for('static', filename='js/searchtags.js') }}" defer></script>
-
-
+    <script src="{{ url_for('static', filename='js/admin.js')}}" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/adminStyle.css') }}">
 </head>
-<frame>
+<body>
     <div class="topmenu">
         <a href="/home">Home</a>
         <a href="search">All Consultants</a>
@@ -22,16 +22,19 @@
         <form id="searchForm" action="search" autocomplete="off">
         <input name="query" id="search" type="text" list="programmingLanguages" placeholder="Search">
             <datalist id="programmingLanguages">
-                {{programmingLanguages|safe}}
+                {% for language in programmingLanguages%}
+                <option value="{{language[1]}}">{{language[1]}}</option>
+                {% endfor%}
                 </datalist></form>
 
-    </div>
-    <div id="searchtags-container">
+        </div>
+        <div id="searchtags-container">
 
     </div>
 {% if session["admin"] == 1 %}
-    <div id="autoTools">
-        <div id="workerstatus"><p>Auto Tools</p></div>
+<label for="autoTools">Auto Tools</label>
+<div id="autoTools" class="formContainer">
+
     {% if linked == 0 %}
         <form action="admin" method="post">
         <button name="action" value="linkedin">Start Linkedin Scraper</button>
@@ -41,29 +44,45 @@
     {% endif %}
 
     {% if cvreader == 0 %}
+
         <form action="admin" method="post">
         <button name="action" value="cvreader">Start CV Reader</button>
         </form>
-        <form action = "/admin/cv/upload" method = "POST"
+
+
+    {% else %}
+        <button>CvReader is running</button>
+    {% endif %}
+</div>
+
+
+
+
+
+    <label for="celeryStatusContainer">Worker Status (long loading)</label>
+    <div id ="celeryStatusContainer" class="formContainer">
+
+    <iframe height="20%" id="celeryStatus" src="/admin/celeryStatus"></iframe>
+    </div>
+
+    <div class="formContainer">
+    <label for="cvUpload">Upload CV (docx, pdf)</label>
+        <form id="cvUpload" action = "/admin/cv/upload" method = "POST"
          enctype = "multipart/form-data">
          <input type = "file" name = "file" accept=".docx, .pdf"/>
          <input type = "submit"/>
       </form>
-    {% else %}
-        <button>CvReader is running</button>
-    {% endif %}
-
-
-<label for="celeryStatus">Worker Status (long loading)</label>
-    <iframe height="20%" id="celeryStatus" src="/admin/celeryStatus"></iframe>
-    </div>
-    <datalist id="tagList">
-        {{programmingLanguages|safe}}
+</div>
+    <datalist id="ConnectTagList">
+            {% for language in programmingLanguages %}
+            <option value="{{language[0]}}">{{language[1]}}</option>
+            {% endfor %}
     </datalist>
-
+    <div id = "AddNewConsultFormContainer" class = "formContainer">
     <label for="addNewConsult">Add new consult</label>
     <form id="addNewConsultForm" action="admin/consult/add" method="post" name="addNewConsult" enctype="multipart/form-data">
-        <input class="addField" type="text" name="name" placeholder="Name">
+        <input class="addField" type="text" name="firstname" placeholder="Firstname">
+        <input class="addField" type="text" name="lastname" placeholder="Lastname">
         <input class="addField" type="text" name="role" placeholder="Role">
         <input class="addField" type="text" name="location" placeholder="Location">
         <input class="addField" type="file" name="profilePicture" accept=".jpg, .png">
@@ -72,68 +91,78 @@
         <div id="addTagsContainer"></div>
         <button id="submitNewConsult" type="submit">Add new consult</button>
     </form>
+        </div>
+</div>
+
+    <div id="RemoveConsultFormContainer" class="formContainer">
     <label for="removeConsult">Remove Consult</label>
     <form id="removeConsult" action="admin/consult/remove" method="post">
 
-        <select id="removeConsultInput" list="consultList" type="text" name="id">
-        <datalist id="consultList">
+        <input id="removeConsultInput" list="consultList" type="text" name="id">
+
+        </input>
+        <button type="submit">Remove consult</button>
+
+    </form>
+        </div>
+    <div id="tagChangeContainer" class="formContainer">
+    <label for="tagChange">Add / remove Tag</label>
+    <form id="tagChange" action="admin/tag/add" method="post">
+        <select id="tagAddRemoveSelect">
+            <option name="Add tag">Add Tag</option>
+            <option name="removeTag">Remove Tag</option>
+        </select>
+        <div id="addRemoveFieldChangerContainer">
+        <input id="tagAddRemoveField" text="text" name="tag" placeholder="Tagname">
+        </div>
+            <button id="submitNewOrRemoveTag">Add tag</button>
+    </form>
+
+    </div>
+
+    <div id="connectTagToConsultContainer" class="formContainer">
+        <label for="connectTagToConsult">Add tag to consult</label>
+        <form id="connectTagToConsult" action="admin/consult/tag/connect" method="POST">
+            <input id="connectConsult" list="consultList" type="text" name="consult-id" placeholder="Consult">
+            <input id="connectTag" list="ConnectTagList" type="text" name="tag" placeholder="Tag">
+            <button type="submit">Add tag to consult</button>
+
+        </form>
+
+
+    </div>
+
+    <div id="removeTagToConsultContainer" class="formContainer">
+        <label for="removeTagToConsult">Remove tag from consult</label>
+        <form id="removeTagToConsult" action="admin/consult/tag/remove" method="POST">
+            <input id="removeTagConsult" list="consultList" type="text" autocomplete="off" name="consult-id" placeholder="Consult">
+            <input id="removeConsultTag" list="specificTagsConsult" autocomplete="off" type="text" name="tag" placeholder="Tag">
+            <button type="submit">Remove tag from consult</button>
+
+        </form>
+    <datalist id="specificTagsConsult">
+
+
+    </datalist>
+
+    </div>
+<datalist id="consultList">
             {% for consult_id in consultantsOptions %}
             <option value="{{consult_id}}">{{consultantsOptions[consult_id]['name']}}, {{consultantsOptions[consult_id]['role']}}, {{consultantsOptions[consult_id]['location']}}</option>
             {% endfor %}
         </datalist>
-        </select>
-        <button type="submit">Remove consult</button>
 
-    </form>
-    <label for="tagChange">Add / remove Tag</label>
-    <form id="tagChange">
-        <select id="tagOption">
-            <option name="removeTag">Remove Tag</option>
-            <option name="Add tag">Add Tag</option>
-        </select>
-        <input text="text" name="tag" placeholder="Tagname">
 
-    </form>
+   <div class="consultantsTagContainers" style="display:none">
+    {% for consult_id in consultantsOptions %}
 
-    <script>
-    let addConsultTagList=[]
-    eventTriggers = ["keyup","keydown"]
-    let addNewConsultSubmitButton = document.getElementById('submitNewConsult')
-   document.querySelectorAll('.addField').forEach(item => {
-    eventTriggers.forEach(trigger => {
-        item.addEventListener(trigger, event => {
-            if(trigger == "keyup"){
-                event.preventDefault()
-                }
-                else{
-                if(event.key == "Enter"){
-                    event.preventDefault()
-                    if(item.getAttribute('name') == "tags"){
-                        if(optionNames.includes(item.value.toLowerCase())){
-                            addTag(item.value,'addTagsContainer')
-                            item.value = ""
-                            item.placeholder = "Add new tag"
-                            }
-                    else{
-                        item.value = ""
-                        item.placeholder = "Tag not found"
-                        }
-                    }
-                }
-            }
-        })
-        })
-        })
-    addNewConsultSubmitButton.addEventListener('click', (event)=>{
-        console.log(event)
-        event.preventDefault()
-        inputfield = document.getElementById('addNewConsult-tags')
-        addConsultTagList.forEach(e =>inputfield.value = inputfield.value + ", " + e )
-        document.getElementById('addNewConsultForm').submit()
-    })
-    </script>
+    <div class="consultTagContainer" value="{{consult_id}}" style="display:none">{{consultantsOptions[consult_id]["tags"]}}</div>
+
+    {% endfor %}
+    </div>
+
     {% endif %}
-
+<button onclick="ExecPythonCommand('click')">CLICK ME</button>
 
 
 <footer>

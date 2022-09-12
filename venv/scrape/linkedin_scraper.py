@@ -32,8 +32,8 @@ def login():
     options.add_argument("--enable-javascript")
     options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
-    user = "fac"
-    password = "Sportlife123"
+    user = "facem"
+    password = "Spo3"
     driver.get('https://www.linkedin.com/login/')
     if "signup" not in driver.current_url:
         driver.find_element('xpath','//*[@id="username"]').send_keys(user)#send in username to username field

@@ -49,12 +49,12 @@ def searchresults():
         print(len(consultants))
         consultantsChecked = checkSearch_v2(queryList, consultants)
         print(len(consultantsChecked))
-        consultantsHTML = build.build_consultants_v2(consultantsChecked)
-        return render_template('search.html', keywords="Your search for: "+searchString+" Returned "+str(len(consultantsChecked))+" Result(s)", data=consultantsHTML, programmingLanguages=programmingTags)
+        #consultantsHTML = build.build_consultants_v2(consultantsChecked)
+        return render_template('search.html', keywords="Your search for: "+searchString+" Returned "+str(len(consultantsChecked))+" Result(s)", data=consultantsChecked, programmingLanguages=programmingTags)
     else:
         consultants = db.get_all_consultants()
-        consultantsHTML = build.build_consultants(consultants)
-        return render_template('search.html',keywords="Do a search for more specific results", data=consultantsHTML, programmingLanguages=programmingTags)
+        #consultantsHTML = build.build_consultants_v2(consultants)
+        return render_template('search.html',keywords="Do a search for more specific results", data=consultants, programmingLanguages=programmingTags)
 
 
 @app.route("/advSearch")
@@ -107,6 +107,7 @@ def admin():
     cvreader = 0
     consultants = db.get_all_consultants()
     cleanConsultants = {}
+    connectList = db.get_all_tags()
     programmingTags = build.build_tags()
     for consult in consultants:
         cleanConsultants[consult["id"]]={"name":consult["firstname"]+" "+consult["lastname"],"role":consult["role"],"location":consult["location"],"tags":consult["tags"]}
@@ -119,7 +120,7 @@ def admin():
         print("debug start cvreader")
         cvreader = 1
 
-    return render_template('admin.html', linked=linked, cvreader=cvreader, consultantsOptions=cleanConsultants, programmingLanguages=programmingTags)
+    return render_template('admin.html', linked=linked, cvreader=cvreader, consultantsOptions=cleanConsultants, programmingLanguages=connectList)
 
 #admintools
 @app.route('/admin/celeryStatus', methods=['POST', 'GET'])
@@ -147,22 +148,30 @@ def celeryStatusPage():
 def deleteConsult():
     return "deleting consult with ID:"+str(request.form["id"])
 
-
+#admintools
 @app.route('/admin/consult/add', methods=['POST'])
 @login_is_required
 def addConsult():
-    fullname = request.form["name"].split(" ")
-    firstname = fullname[0]
-    lastname = fullname[1:-1]
+    firstname = request.form["firstname"]
+    lastname = request.form["lastname"]
     role = request.form['role']
     description = request.form['description']
-    image_url = '\\profilePictures\\'+request.files['profilePicture'].filename
+    image_url = '\\profilePictures\\\\'+request.files['profilePicture'].filename
     picture = request.files['profilePicture']
-    uploadPicture(picture)
-    tags = request.form['tags']
-    return request.form
+    pictureUploadStatus = uploadPicture(picture)
+    tags = request.form['tags'].split(":")
+    cleanTags = [tag for tag in tags if tag.strip()]
+    location = request.form["location"]
+    consult = {"firstname":firstname, "lastname":lastname, "role":role, "description":description, "location":location, "image_url":image_url, "tags":cleanTags, "pictureStats":pictureUploadStatus}
 
-#admintools change route / bake into admin route?
+    addStatus = db.add_consult(consult)
+    if(addStatus):
+        return "Successfully added consult "+str(consult)
+    else:
+        return "something went wrong" + str(consult)
+
+
+#admintools
 @app.route('/admin/cv/upload',methods = ['POST'])
 @login_is_required
 def uploadCV():
@@ -170,6 +179,66 @@ def uploadCV():
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.config['UPLOAD_FOLDER']), filename)
         return 'file uploaded successfully'
+
+
+#admintools
+@app.route("/admin/tag/remove", methods = ['POST'])
+@login_is_required
+def removeTag():
+    tagname = request.form["tag"]
+    removeTagStatus = db.remove_tag(tagname)
+    if(removeTagStatus):
+        return "Successfully removed tag "+request.form["tag"]
+    else:
+        return "something went wrong - is tag already removed?"
+
+#admintools
+@app.route("/admin/tag/add", methods = ['POST'])
+@login_is_required
+def addTag():
+    tagname = request.form["tag"]
+    addTagStatus = db.add_tag(tagname)
+    if(addTagStatus):
+        return "Successfully added tag "+request.form["tag"]
+    else:
+        return "Something went wrong - tag might already exist"
+
+
+#admintools
+@app.route("/admin/consult/tag/connect", methods =['POST'])
+@login_is_required
+def connectConsulttoTag():
+    consult_id = request.form["consult-id"]
+    tag_id = request.form["tag"]
+    connectStatus = db.connect_consult_to_tag(consult_id, tag_id)
+    if(connectStatus):
+        return request.form
+    else:
+        return "couldnt connect - maybe connection already exists?"
+
+#admintools
+@app.route("/admin/consult/tag/remove", methods=['POST'])
+@login_is_required
+def removeTagFromConsult():
+    consult_id = request.form["consult-id"]
+    tag = request.form["tag"]
+    tag_id = db.get_tag_id(tag)
+    removeTagStatus = db.remove_tag_from_consult(consult_id, tag_id)
+    if(removeTagStatus):
+        return request.form
+    else:
+        return "Tag to Consult connection not found"
+
+#admintools
+@app.route("/admin/consult/remove", methods=['POST'])
+@login_is_required
+def removeConsult():
+    consult_id = request.form["id"]
+    removeConsultStatus = db.remove_consult(consult_id)
+    if(removeConsultStatus):
+        return "Successfully deleted consult with id:"+request.form["id"]+ "<button onclick='history.back()'>Go Back</button>"
+    else:
+        return "something went wrong. oops"
 
 
 def checkSearch_v2(queryList, dataList):
@@ -189,12 +258,25 @@ def checkSearch_v2(queryList, dataList):
 
 
 
+
 def uploadPicture(pic):
     filename = secure_filename(pic.filename)
-    print(filename)
-    #filename = "\\profilePictures\\"+filename
-    print(filename)
-    pic.save(os.path.join(app.config['UPLOAD_FOLDER']+"\\profilePictures\\"+filename))
+    try:
+        fileExists = open(app.config['UPLOAD_FOLDER']+"\\profilePictures\\"+filename, "r")
+        return "File Exists"
+    except FileNotFoundError:
+        pic.save(os.path.join(app.config['UPLOAD_FOLDER']+"\\profilePictures\\"+filename))
+        return "Success"
+    except Exception as e:
+        print("error occured during file upload")
+        print(e)
+        return "Error "+e
+
+
+@app.route('/click', methods=['GET'])
+def buttonClick():
+    print("CLICKED")
+    return "clicked"
 
 
 

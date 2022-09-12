@@ -1,0 +1,21 @@
+CVREADER: add functionality to add to database
+CVREADER: add functionality to read adesso CVS
+LINKEDIN: double check that it works correctly with CELERY (trunc table and rerun)
+
+CELERY: Add backend to get status logs
+
+
+ADMIN: Backend functionality for everything
+
+Builders: Convert to Jinja template code instead?
+
+
+CSS: basically all fucking CSS
+
+
+Database:
+    add field for CV to be able to display/download CVs from profile? if so add download / display link
+
+JS:
+    Adminpage:
+        fix button behaviour after celery backend is properly implemented

@@ -1,0 +1,33 @@
+
+
+
+label{
+  margin: auto;
+  padding-top:5px;
+}
+
+div.formContainer{
+border: 1px solid rgb(0, 0, 0);
+ margin: auto;
+ background-color:white;
+ margin-top:10px;
+}
+
+input{
+margin:5px;
+display:block;
+}
+
+
+div.formContainer label{
+    vertical-align: top;
+}
+
+
+#RemoveConsultFormContainer{
+    width:40%;
+}
+
+#RemoveConsultFormContainer form select{
+    width:40%;
+}

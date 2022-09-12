@@ -40,28 +40,48 @@ def test_connection():
 
 
 
+#def get_all_consultants():
+#    connection = get_connection()
+#    cursor = connection.cursor(dictionary=True)
+#    cursor.execute("SELECT DISTINCT consult.id, firstname, lastname, role, image_url, location, description FROM consultants.consult LEFT JOIN tags on consult.id = tags.id LEFT JOIN consult_tags on consult.id = consult_tags.consult_id ORDER BY firstname ASC")
+#    allConsultants = cursor.fetchall()
+#    tupleCursor = connection.cursor()
+#    for profile in allConsultants:
+#        tupleCursor.execute(
+#            "SELECT tag FROM tags INNER JOIN consult_tags on consult_tags.tag_id = tags.id WHERE consult_id = '" + str(profile["id"]) + "'")
+#        profilePos = allConsultants.index(profile)
+#        allConsultants[profilePos]["tags"] = []
+#        tags = tupleCursor.fetchall()
+#        for tag in tags:
+#            allConsultants[profilePos]["tags"].append(tag[0])
+#    close_connection(connection)
+#    return allConsultants
+
 def get_all_consultants():
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
     cursor.execute("SELECT DISTINCT consult.id, firstname, lastname, role, image_url, location, description FROM consultants.consult LEFT JOIN tags on consult.id = tags.id LEFT JOIN consult_tags on consult.id = consult_tags.consult_id ORDER BY firstname ASC")
     allConsultants = cursor.fetchall()
     tupleCursor = connection.cursor()
+    resultDict = {}
     for profile in allConsultants:
+        resultDict[profile["id"]] = {"name": profile["firstname"] + " " + profile["lastname"], "role": profile["role"],
+                                     "location": profile["location"], "image_url": profile["image_url"],
+                                     "description": profile["description"], "tags": []}
         tupleCursor.execute(
             "SELECT tag FROM tags INNER JOIN consult_tags on consult_tags.tag_id = tags.id WHERE consult_id = '" + str(profile["id"]) + "'")
-        profilePos = allConsultants.index(profile)
-        allConsultants[profilePos]["tags"] = []
+
         tags = tupleCursor.fetchall()
         for tag in tags:
-            allConsultants[profilePos]["tags"].append(tag[0])
+            resultDict[profile["id"]]["tags"].append(tag[0])
     close_connection(connection)
-    return allConsultants
+    return resultDict
 
 
 def get_all_tags():
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT DISTINCT TAG from TAGS")
+    cursor.execute("SELECT DISTINCT ID,TAG from TAGS")
     allTags = cursor.fetchall()
     close_connection(connection)
     return allTags
@@ -92,34 +112,11 @@ def get_all_roles():
     return allRoles
 
 
-#################### old
-#def search_db(*queries):
-#    connection = get_connection()
-#    cursor = connection.cursor()
-#    print("QUERIES")
-#    print(queries)
-#    for query in queries[0]:
-#        cursor.execute("SELECT * FROM consult WHERE '"+query+"' IN (firstname, lastname, role, location);")
-#        consult_results = cursor.fetchall()
-#        cursor.execute("SELECT id FROM tags WHERE '"+query+"' LIKE (tag)")
-#        tags_ids = cursor.fetchall()
-#        for tag_id in tags_ids:
-#            cursor.execute("SELECT consult_id from consult_tags WHERE tag_id = '"+str(tag_id[0])+"'")
-#            tags_consult_ids = cursor.fetchall()
-#            for consult_id in tags_consult_ids:
-#                cursor.execute("SELECT * FROM consult WHERE id = '" + str(consult_id[0]) + "'")
-#                consult = cursor.fetchall()
-#                consult_results = consult_results + consult
-#
-#
-#    close_connection(connection)
-#    return consult_results
-####################
 
 def search_multiple(*args):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
-    query = "SELECT DISTINCT consult_id, firstname, lastname, role, image_url, location, description FROM consultants.consult_tags LEFT JOIN tags on consult_tags.tag_id = tags.id LEFT JOIN consult on consult_tags.consult_id = consult.id "
+    query = "SELECT DISTINCT id, firstname, lastname, role, image_url, location, description FROM consultants.consult_tags LEFT JOIN tags on consult_tags.tag_id = tags.id LEFT JOIN consult on consult_tags.consult_id = consult.id "
     for arg in args[0]:
         if arg == args[0][0]:
             #first
@@ -147,7 +144,7 @@ def search_multiple(*args):
 def search_multiple_v2(*args):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
-    query = "SELECT DISTINCT consult_id, firstname, lastname, role, image_url, location, description FROM consultants.consult_tags LEFT JOIN tags on consult_tags.tag_id = tags.id LEFT JOIN consult on consult_tags.consult_id = consult.id "
+    query = "SELECT DISTINCT consult.id, firstname, lastname, role, image_url, location, description FROM consultants.consult_tags LEFT JOIN tags on consult_tags.tag_id = tags.id LEFT JOIN consult on consult_tags.consult_id = consult.id "
     for arg in args[0]:
         if arg == args[0][0]:
             #first
@@ -159,16 +156,21 @@ def search_multiple_v2(*args):
             query = query + "OR '"+str(arg)+"' in (firstname, lastname, role, location, tag) "
     cursor.execute(query)
     results = cursor.fetchall()
+    print("SEARCH MUTL RESULTSLEN")
+    print(len(results))
     #add tags to each profile and convert result dictionary to new dictionary using consult id as key
     resultDict = {}
     tupleCursor = connection.cursor()
     for profile in results:
-        tupleCursor.execute("SELECT tag FROM tags INNER JOIN consult_tags on consult_tags.tag_id = tags.id WHERE consult_id = '"+str(profile["consult_id"])+"'")
-        tags = tupleCursor.fetchall()
-        resultDict[profile["consult_id"]] = {"name":profile["firstname"]+" "+profile["lastname"],"role":profile["role"], "location":profile["location"],"image_url":profile["image_url"],"description":profile["description"], "tags":[]}
-        #resultDict[profilePos]["tags"] = []
-        for tag in tags:
-            resultDict[profile["consult_id"]]["tags"].append(tag[0])
+        if profile["id"] is not None:
+            print(profile)
+            tupleCursor.execute("SELECT tag FROM tags INNER JOIN consult_tags on consult_tags.tag_id = tags.id WHERE consult_id = '"+str(profile["id"])+"'")
+            tags = tupleCursor.fetchall()
+
+            resultDict[profile["id"]] = {"name":profile["firstname"]+" "+profile["lastname"],"role":profile["role"], "location":profile["location"],"image_url":profile["image_url"],"description":profile["description"], "tags":[]}
+            #resultDict[profilePos]["tags"] = []
+            for tag in tags:
+                resultDict[profile["id"]]["tags"].append(tag[0])
 
     close_connection(connection)
     return resultDict
@@ -240,9 +242,15 @@ def connect_consult_to_tag(consult_id, tag_id):
     cursor = connection.cursor()
 
     #convert variables from list in tuple to string
-    consult_id = str(consult_id[0][0])
-    tag_id = str(tag_id[0])
-
+    print()
+    try:
+        consult_id = str(consult_id[0][0])
+    except:
+        consult_id = str(consult_id[0])
+    try:
+        tag_id = str(tag_id[0][0])
+    except:
+        tag_id = str(tag_id[0])
     #check that connection doesnt already exist
     cursor.execute("SELECT consult_tag_id FROM consult_tags WHERE consult_id = '"+consult_id+"' and tag_id = '"+tag_id+"'")
     results_consult_tag = cursor.fetchall()
@@ -250,18 +258,116 @@ def connect_consult_to_tag(consult_id, tag_id):
     #check that consult id exists
     cursor.execute("SELECT id FROM consult where id = '"+consult_id+"'")
     result_consult = cursor.fetchall()
+    print("LEN RESULT CONSULT CONNECTION ")
+    print(len(result_consult))
     #check that tag id exists
     cursor.execute("SELECT id FROM tags WHERE id = '"+tag_id+"'")
     result_tag = cursor.fetchall()
+    print("LEN RESULT TAG CONNECTION")
+    print(len(result_tag))
+
 
     if (len(results_consult_tag) == 0 and len(result_consult) != 0 and len(result_tag) != 0):
         cursor.execute("INSERT INTO consult_tags(consult_id, tag_id) VALUES ('"+consult_id+"',"+tag_id+");")
         connection.commit()
+        close_connection(connection)
+        return True
     else:
         print("connection between tag_id "+tag_id+" and consult_id "+consult_id+" already exists")
+        close_connection(connection)
+        return False
+
+def remove_tag_from_consult(consult_id, tag_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    print(consult_id, tag_id)
+    cursor.execute("SELECT consult_tag_id FROM consult_tags WHERE consult_id = '"+str(consult_id)+"' AND tag_id ='"+str(tag_id[0])+"'")
+    result = cursor.fetchone()
+    if(result):
+        print("deleting "+str(result))
+        #sql = "DELETE FROM consult_tags WHERE consult_id = '"+str(consult_id)+"' AND tag_id ='"+str(tag_id)+"'"
+        #cursor.execute(sql)
+        #connection.commit()
+        close_connection(connection)
+        return True
+    else:
+        close_connection(connection)
+        return False
+
+
+def get_tag_id(tag_name):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT id from tags where tag = '"+tag_name+"'")
+    result = cursor.fetchone()
     close_connection(connection)
-
-
+    return result
 
 def add_consult(consult):
-    pass
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM CONSULT WHERE firstname = '"+consult["firstname"]+"' AND lastname = '"+consult["lastname"]+"'")
+    result = cursor.fetchone()
+    print(result)
+    if not result:
+        print("adding consult to DB")
+        cursor.execute("INSERT INTO CONSULT(firstname, lastname, role, location, description, image_url) "
+                       "VALUES('"+consult["firstname"]+"','"+consult["lastname"]+"','"+consult["role"]+"','"+consult["location"]+"','"+consult["description"]+"','"+consult["image_url"]+"')")
+
+        cursor.execute("SELECT ID FROM CONSULT WHERE firstname = '"+consult["firstname"]+"' and lastname = '"+consult["lastname"]+"' and role = '"+consult["role"]+"'")
+        consult_id = cursor.fetchone()
+        print("**********************")
+        print(consult["tags"])
+        print("***************")
+        print(consult_id)
+        print("******************")
+        connection.commit()
+        for tag in consult["tags"]:
+            tag_id = get_tag_id(tag)
+            connect_consult_to_tag_status = connect_consult_to_tag(consult_id, tag_id)
+            print("connect consult to tag status is "+str(connect_consult_to_tag_status))
+
+        return True
+    else:
+        return False
+
+def add_tag(tagname):
+    connection = get_connection()
+    cursor = connection.cursor(buffered=True)
+    results = cursor.execute("SELECT * from TAGS where tag ='"+tagname+"'")
+    if not results:
+        cursor.execute("INSERT INTO tags (tag) Values('"+tagname+"');")
+        connection.commit()
+        close_connection(connection)
+        return True
+    else:
+        return False
+
+def remove_tag(tagname):
+    connection = get_connection()
+    cursor = connection.cursor(buffered=True)
+    cursor.execute("SELECT * from tags where lower(tag) = lower('"+tagname+"')")
+    result = cursor.fetchall()
+    if result:
+        cursor.execute("DELETE FROM tags WHERE lower(tag) = lower('"+tagname+"') LIMIT 1;")
+        connection.commit()
+        close_connection(connection)
+        return True
+    else:
+        close_connection(connection)
+        return False
+
+def remove_consult(consult_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("Select * from consult where id = '"+consult_id+"'")
+    result = cursor.fetchall()
+    if result:
+        cursor.execute("DELETE FROM CONSULT WHERE id = '" + consult_id + "' LIMIT 1;")
+        connection.commit()
+        close_connection(connection)
+        return True
+    else:
+        close_connection(connection)
+        return False
+

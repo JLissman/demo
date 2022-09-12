@@ -30,8 +30,30 @@
 <h1>{{ keywords}}</h1>
 <div class="search-results-container">
 <ul class="resultList">
+    {% for id in data %}
+    <li class="entity-result">
+        <div class="searchResult">
+            <div class="result-img">
+                <img class="profile-img"src='{{data[id]["image_url"]}}'>
+            </div>
+            <div class="result-name">
+                <a href="/profile?id={{id}}">{{data[id]["name"]}}</a>
+            </div>
+            <div class="result-role">{{data[id]["role"]}}</div>
+            <div class="table"> <ul class="result-tags-list">
+                {% for tag in data[id]["tags"]%}
+                <li class="tag"><a class="competence-tag-link" href="/search?query={{tag}}">{{tag}}</a></li>
+                {% endfor %}
+            </ul></div><div class="description">{{data[id]["description"]}}</div>
+            <div class="result-location">
+                <img class="location-tag"src="https://flyclipart.com/thumb2/location-pin-emoji-934877.png">
+                  {{data[id]["location"]}}
+            </div>
+        </div>
+    </li>
 
-    {{ data|safe }}
+
+    {% endfor %}
 
 </ul>
 </div>

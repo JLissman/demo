@@ -40,8 +40,14 @@ def build_consultants_v2(data):
     finalHTML = ""
     if(len(data) > 0):
         for id in data:
-            start = '<li class="entity-result"> <div class="searchResult"> <div class="result-img"> <img class="profile-img"src="' + \
+            if('www' in data[id]["image_url"] or 'http' in data[id]["image_url"] ):
+                start = '<li class="entity-result"> <div class="searchResult"> <div class="result-img"> <img class="profile-img"src="' + \
                     data[id]["image_url"] + '"> </div> <div class="result-name"><a href="/profile?id='+ str(id) +'">' + data[id]["name"] + '</a></div> <div class="result-role">' + data[id]["role"] + '</div> <div class="table"> <ul class="result-tags-list">'
+            else:
+                start = '<li class="entity-result"> <div class="searchResult"> <div class="result-img"> <img class="profile-img"src="' + \
+                    "{{ url_for('static', filename='"+data[id]["image_url"]+'\') }} '"> </div> <div class='result-name'><a href='/profile?id=\'"+ str(id) +'\'>' + data[id]["name"] + '</a></div> <div class="result-role">' + data[id]["role"] + '</div> <div class="table"> <ul class="result-tags-list">'
+
+
             #tags = db.get_tags(consult["consult_id"])
             HTMLtags = ""
             for tag in data[id]["tags"]:
@@ -58,7 +64,7 @@ def build_tags():
     tags = db.get_all_tags()
     html_tags = ""
     for tag in tags:
-        html_tags = html_tags + '<option value = "'+str(tag[0])+'"> '+str(tag[0])+' </ option>'
+        html_tags = html_tags + '<option value = "'+str(tag[1])+'"> '+str(tag[1])+' </ option>'
     return html_tags
 
 
