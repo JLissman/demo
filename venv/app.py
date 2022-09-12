@@ -106,11 +106,11 @@ def admin():
     linked = 0
     cvreader = 0
     consultants = db.get_all_consultants()
-    cleanConsultants = {}
+    #cleanConsultants = {}
     connectList = db.get_all_tags()
     programmingTags = build.build_tags()
-    for consult in consultants:
-        cleanConsultants[consult["id"]]={"name":consult["firstname"]+" "+consult["lastname"],"role":consult["role"],"location":consult["location"],"tags":consult["tags"]}
+    #for consult in consultants:
+    #    cleanConsultants[consult["id"]]={"name":consult["firstname"]+" "+consult["lastname"],"role":consult["role"],"location":consult["location"],"tags":consult["tags"]}
     if request.method == 'POST' and request.form["action"] ==  'linkedin':
         task.runLinkedinScraper.delay()
         print("debug start linkedin")
@@ -120,7 +120,7 @@ def admin():
         print("debug start cvreader")
         cvreader = 1
 
-    return render_template('admin.html', linked=linked, cvreader=cvreader, consultantsOptions=cleanConsultants, programmingLanguages=connectList)
+    return render_template('admin.html', linked=linked, cvreader=cvreader, consultantsOptions=consultants, programmingLanguages=connectList)
 
 #admintools
 @app.route('/admin/celeryStatus', methods=['POST', 'GET'])
@@ -156,7 +156,7 @@ def addConsult():
     lastname = request.form["lastname"]
     role = request.form['role']
     description = request.form['description']
-    image_url = '\\profilePictures\\\\'+request.files['profilePicture'].filename
+    image_url = 'profilePictures/'+request.files['profilePicture'].filename
     picture = request.files['profilePicture']
     pictureUploadStatus = uploadPicture(picture)
     tags = request.form['tags'].split(":")

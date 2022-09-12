@@ -34,7 +34,13 @@
     <li class="entity-result">
         <div class="searchResult">
             <div class="result-img">
+                {% if 'www' in data[id]["image_url"] or 'http' in data[id]["image_url"] %}
                 <img class="profile-img"src='{{data[id]["image_url"]}}'>
+                {% else %}
+                <img class="profile-img" src="{{ url_for('static', filename=data[id]['image_url']) }}">
+                {% endif %}
+
+
             </div>
             <div class="result-name">
                 <a href="/profile?id={{id}}">{{data[id]["name"]}}</a>
