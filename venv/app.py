@@ -107,8 +107,10 @@ def admin():
     cvreader = 0
     consultants = db.get_all_consultants()
     #cleanConsultants = {}
-    connectList = db.get_all_tags()
-    programmingTags = build.build_tags()
+    tags = db.get_all_tags()
+
+    #remake into jinja template
+    #programmingTags = build.build_tags()
     #for consult in consultants:
     #    cleanConsultants[consult["id"]]={"name":consult["firstname"]+" "+consult["lastname"],"role":consult["role"],"location":consult["location"],"tags":consult["tags"]}
     if request.method == 'POST' and request.form["action"] ==  'linkedin':
@@ -120,7 +122,7 @@ def admin():
         print("debug start cvreader")
         cvreader = 1
 
-    return render_template('admin.html', linked=linked, cvreader=cvreader, consultantsOptions=consultants, programmingLanguages=connectList)
+    return render_template('admin.html', linked=linked, cvreader=cvreader, consultantsOptions=consultants, programmingLanguages=tags)
 
 #admintools
 @app.route('/admin/celeryStatus', methods=['POST', 'GET'])
@@ -260,6 +262,7 @@ def checkSearch_v2(queryList, dataList):
 
 
 def uploadPicture(pic):
+    #need to check if filename exist and then if it does - rename file to something else & return new name
     filename = secure_filename(pic.filename)
     try:
         fileExists = open(app.config['UPLOAD_FOLDER']+"\\profilePictures\\"+filename, "r")

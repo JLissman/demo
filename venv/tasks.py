@@ -35,6 +35,13 @@ def runcvReader():
     cvReader()
     return {'status':'Task completed!'}
 
+@app.task()
+def getLinkedinProfile(profile_url):
+    scrape.login()
+    profile = scrape.get_profile_info(profile_url)
+    scrape.shutdown()
+    db.add_consult(profile)
+    return{'status':'Profile imported'}
 
 def checkWorker():
     i = app.control.inspect()

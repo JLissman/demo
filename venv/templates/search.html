@@ -14,15 +14,15 @@
         <a href="/home">Home</a>
         <a class="active" href="search">All Consultants</a>
         <a href="advSearch">Avanced Search</a>
-        <div id="userName">Logged in as:<br><img id="profile_image" width="50px" height="50px" src={{session['image']}}> {{session['name']}}</div>
-        <a href="logout">Log out</a>
+
 
         <form id="searchForm" action="search" autocomplete="off">
         <input name="query" id="search" type="text" list="programmingLanguages" class="input" placeholder="Search">
             <datalist id="programmingLanguages">
                 {{programmingLanguages|safe}}
                 </datalist></form>
-
+        <div id="userName">Logged in as:<br><img id="profile_image" width="50px" height="50px" src={{session['image']}}> {{session['name']}}</div>
+        <a href="logout">Log out</a>
     </div>
     <div id="searchtags-container">
 
@@ -52,7 +52,7 @@
                 {% endfor %}
             </ul></div><div class="description">{{data[id]["description"]}}</div>
             <div class="result-location">
-                <img class="location-tag"src="https://flyclipart.com/thumb2/location-pin-emoji-934877.png">
+                <img class="location-tag"src="https://www.shareicon.net/data/512x512/2016/08/24/819488_pin_512x512.png">
                   {{data[id]["location"]}}
             </div>
         </div>

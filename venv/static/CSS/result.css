@@ -1,11 +1,12 @@
 .search-results-container{
-    text-align:left;
+    text-align:center;
 
 }
 
 .profile-img {
-    width:50px;
-    height:50px;
+    width:100px;
+    height:100px;
+    display:inline-block;
 }
 
 .location-tag{
@@ -13,7 +14,7 @@
     height:30px;
 }
 .entity-result {
-
+    white-space:normal;
     display:inline-grid;
     background: #0099ff;
     margin-left:10%;
@@ -26,44 +27,45 @@
     font-size:200%;
     text-align:center;
     position:relative;
-    top:-40%;
+    white-space:normal;
+    display:inline-block;
 }
 .result-role {
     text-align:center;
     position:relative;
-    top:-40%;
     font-size:150%;
 }
 .result-tags-list {
     text-align:center;
     list-style:none;
-    width:50%;
+    margin:10px
 
 }
-.table {
 
-    top:-38%;
+.table{
 	display: table;
 	margin: 0 auto;
 }
 
+
 .tag {
-    margin-top: -1px;
     border-radius: 25px;
     border: 1px solid rgb(0, 0, 0);
     padding:3px;
-    margin:2px;
+    margin:5px;
     display: inline;
+    white-space: nowrap;
 }
 
 
 .result-location{
     float:right;
-
 }
+
 h1{
     text-align:center;
 }
+
 body{
     min-height: 100vh;
     margin: 0;
@@ -81,15 +83,14 @@ body{
     color:black;
     text-decoration:none;
 }
+
 a{
     text-decoration:none;
     color:black;
-
 }
 a:visited{
     text-decoration:none;
     color:black;
-
 }
 
 .description{

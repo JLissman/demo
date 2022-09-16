@@ -17,7 +17,7 @@ a {
 .topmenu a {
     float: left;
     margin-left:10%;
-    display: block;
+    display: inline;
     color: black;
     text-align: center;
     padding: 14px;
@@ -36,7 +36,6 @@ a {
     color: white;
 }
 
-/* Style the search box inside the navigation bar */
 .topmenu input[type=text] {
     float: right;
     padding: 6px;
@@ -95,6 +94,7 @@ footer a:hover{
     display:block;
 
 }
+
 
 #searchtags-container{
     margin-top: -1px;
