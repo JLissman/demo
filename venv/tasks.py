@@ -4,8 +4,7 @@ import database as db
 from cvReader.pdfReader import cvReader
 import os
 import sys
-app = Celery('tasks',
-             broker='amqp://admin:pass@localhost:5672/myvhost')
+app = Celery('tasks',backend='rpc://', broker='amqp://admin:pass@localhost:5672/myvhost')
 
 
 @app.task()
@@ -37,6 +36,7 @@ def runcvReader():
 
 @app.task()
 def getLinkedinProfile(profile_url):
+    print("Scraping profile:"+profile_url)
     scrape.login()
     profile = scrape.get_profile_info(profile_url)
     scrape.shutdown()

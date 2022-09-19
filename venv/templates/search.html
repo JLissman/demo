@@ -19,7 +19,9 @@
         <form id="searchForm" action="search" autocomplete="off">
         <input name="query" id="search" type="text" list="programmingLanguages" class="input" placeholder="Search">
             <datalist id="programmingLanguages">
-                {{programmingLanguages|safe}}
+                {% for language in programmingLanguages%}
+                <option value="{{language[1]}}">{{language[1]}}</option>
+                {% endfor%}
                 </datalist></form>
         <div id="userName">Logged in as:<br><img id="profile_image" width="50px" height="50px" src={{session['image']}}> {{session['name']}}</div>
         <a href="logout">Log out</a>

@@ -30,7 +30,7 @@ def login():
     global driver
     options = Options()
     options.add_argument("--enable-javascript")
-    options.add_argument("--headless")
+    #options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
     user = "facem"
     password = "Spo3"

@@ -6,7 +6,8 @@ import numpy as np
 import matplotlib
 import pytesseract
 from cvReader.image_extraction import extractProfilePictureFromPDF as saveImage
-
+import language_tool_python
+from database import add_consult
 
 def getFileNames():
     folderPath = ("C:/Users/Jonathan/PycharmProjects/demo/venv/cvReader/cvs/*")#../cvReader/cvs/*.pdf
@@ -60,15 +61,13 @@ def getDescription(pdf):
     endX,endY = getHighestXandLowestY(toolsStartList)
 
     crop_rectangle = (startX, startY, endX, endY)
-    print(crop_rectangle)
     cropped_im = im.crop(crop_rectangle)
-    cropped_im.show()
+    #cropped_im.show()
     cropped_im.save(output)
 
 
 def getSkillsStartCoords(image):
     pim = Image.open(image).convert('RGB')
-    print("getting coords for "+image)
     im = np.array(pim)
     #PIL uses RGB ordering
     blue = [5,44,70]
@@ -100,13 +99,12 @@ def getProfileCardCoords(image):
         Y, X = np.where(np.all(im == lightBlue, axis=2))
 
     zipped = np.column_stack((X, Y))
-    print("ZIPPED")
-    print(zipped)
     return zipped
 
 
 
 def extractTextFromImage(pdf):
+    #change this to relative path - current issue is that celery cant read relative path
     fullImg_path = "C:\\Users\\Jonathan\\PycharmProjects\\demo\\venv\\cvReader\\png\\" + pdf
     # Define path to tessaract.exe
     path_to_tesseract = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -120,7 +118,7 @@ def extractTextFromImage(pdf):
     im_resized = img.resize(size)
     # Extract text from image
     text = pytesseract.image_to_string(im_resized)
-    print(text)
+    #print(text)
     return text
 
 def getHighestXandLowestY(coords):
@@ -154,20 +152,69 @@ def getLowestXandHighestY(coords):
             placeholderY = y
     return (placeholderX, placeholderY)
 
+
 def checkPngs():
     #check folder if png exist
     pass
 
+
+def getRole(pdf):
+    fullImg_path = "C:\\Users\\Jonathan\\PycharmProjects\\demo\\venv\\cvReader\\png\\" + pdf.replace(".pdf", ".png")
+    output = "C:\\Users\\Jonathan\\PycharmProjects\\demo\\venv\\cvReader\\png\\" + pdf.replace(".pdf", "CARD.png")
+
+    im = Image.open(fullImg_path)
+
+    fullX, fullY = im.size
+    profileCardCoords = getProfileCardCoords(fullImg_path)
+    startX, startY = profileCardCoords[0]
+    endX, endY = profileCardCoords[-1]
+
+    crop_rectangle = (startX-10, startY+130, endX, fullY/2)
+    #print(crop_rectangle)
+    cropped_im = im.crop(crop_rectangle)
+    #cropped_im.show()
+    cropped_im.save(output)
+
+
+def checkSpellingAndGrammar(text):
+    my_tool = language_tool_python.LanguageTool('en-US')
+
+    correct_text = my_tool.correct(text)
+
+    # printing some texts
+    print("Original Text:", text)
+    print("Text after correction:", correct_text)
+
+
 if __name__ == '__main__':
     files = getFileNames()
+    profiles = []
     for file in files:
+        print("working on "+file)
         convertToPng(file)
+
         getSkillsAndTools(file)
-        skills = extractTextFromImage(file.replace(".pdf", "TOOLS.png"))
+        skills = extractTextFromImage(file.replace(".pdf", "TOOLS.png")).split("\n")
+        #extract skills
+        tags = []
+        for skill in skills:
+            if skill != skill.upper() and skill != "y of Aspose. Words. To discover the full versions of our APIs" and skill != "yose.com/words/":
+                tags.append(skill)
+
         getDescription(file)
         description = extractTextFromImage(file.replace(".pdf", "DESC.png"))
-        
 
-
+        getRole(file)
+        nameAndRole = extractTextFromImage(file.replace(".pdf", "CARD.png")).split("\n")
+        role = nameAndRole[1]
+        name = nameAndRole[0]
+        print(name)
+        firstname = name.split(" ")[0]
+        lastname = name.split(" ")[1:]
         saveImage(file, name)
         image_url = "{{ url_for('static', filename='profilePictures/" + name + ".jpg') }}"
+        profiles.append({"firstname":firstname,"lastname":lastname, "role":role, "description":description, "image_url":image_url, "tags":tags})
+
+    print("adding consultants to db")
+    for p in profiles:
+        db.add_consult(p)

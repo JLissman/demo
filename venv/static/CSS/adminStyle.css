@@ -25,9 +25,12 @@ div.formContainer label{
 
 
 #RemoveConsultFormContainer{
-    width:40%;
+    width:auto;
 }
 
 #RemoveConsultFormContainer form select{
-    width:40%;
+    width:auto;
+}
+#AddNewConsultFormContainer{
+   width:auto;
 }

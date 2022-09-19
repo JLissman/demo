@@ -49,7 +49,10 @@
         <button name="action" value="cvreader">Start CV Reader</button>
         </form>
 
-
+        <form action="admin" method="post">
+            <input name="url" value="url">
+            <button name="action" value="singlelinkedin">Fetch single linkedin profile</button>
+        </form>
     {% else %}
         <button>CvReader is running</button>
     {% endif %}

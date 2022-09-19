@@ -15,7 +15,9 @@
         <form id="searchForm" action="search" autocomplete="off">
         <input name="query" id="search" type="text" list="programmingLanguages" class="input" href="search" placeholder="Search">
             <datalist id="programmingLanguages">
-                {{programmingLanguages|safe}}
+                {% for language in programmingLanguages%}
+                <option value="{{language[1]}}">{{language[1]}}</option>
+                {% endfor%}
                 </datalist></form>
 
     </div>
