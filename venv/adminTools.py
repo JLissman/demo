@@ -29,8 +29,10 @@ def admin():
     tags = db.get_all_tags()
     print(request.form)
     if request.method == 'POST' and request.form["action"] ==  'linkedin':
-        #task.runLinkedinScraper.delay()
+        linked = task.runLinkedinScraper.delay()
         print("debug start linkedin")
+        print(linked.ready())
+        print(linked.result)
 
     elif request.method == 'POST' and request.form["action"] == 'cvreader':
         #task.cvReader()

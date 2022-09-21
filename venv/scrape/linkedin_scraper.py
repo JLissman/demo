@@ -118,10 +118,8 @@ def get_profile_info(list):
             competence_name = competence_name_unsplit.split('\n')
             competence_list.append(competence_name[0])
 
-        competence_list[:] = [x for x in competence_list if x]
-
-
-        profile_list.append((first_name, last_name, title, img_url, location, description, competence_list))
+            competence_list[:] = [x for x in competence_list if x]
+            profile_list.append((first_name, last_name, title, img_url, location, description, competence_list))
 
     return profile_list
 
@@ -156,23 +154,24 @@ def scrapeAndSave():
     print("profile url length "+str(len(profile_url_list)))
     profiles = get_profile_info(profile_url_list)
 
-    #save profiles to CSV instead so i dont have to run this script over each time during debugging
+    #save profiles to CSV instead so i dont have to run this script over and over each time during debugging
+    '''
     try:
         with open('profiles.csv', 'w+', newline='') as profile_csv:
-            fieldnames = ['firstname', 'lastname', 'role', 'image_url', 'location', 'description']
+            fieldnames = ['firstname', 'lastname', 'title', 'image_url', 'location', 'description']
             profile_writer = csv.DictWriter(profile_csv, fieldnames=fieldnames)
             writer.writeheader()
             with open('tags.csv', 'w+', newline='') as tags_csv:
                 tag_fieldnames ['tag','consult_id']
                 tag_writer = csv.DictWriter(tags_csv, fieldnames=tag_fieldnames)
                 for row in profiles:
-                    writer.writerow({'firstname': row[1], 'lastname':row[2],'role':row[3],'image_url':row[4],'location':row[5],'description':row[6]})
+                    writer.writerow({'firstname': row[1], 'lastname':row[2],'title':row[3],'image_url':row[4],'location':row[5],'description':row[6]})
                     for tagrow in profiles[-1]:
                         tag_writer.writerow({'tag':tagrow, 'consult_id':row[0]})
-    except e:
+    except Exception as e:
         print(e)
         print("some error in writer")
-
+    '''
     print("Number of profiles saved:"+str(len(profiles)))
     db.add_consultants_to_db(profiles)
     driver.close()

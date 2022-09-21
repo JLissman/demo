@@ -47,7 +47,7 @@
             <div class="result-name">
                 <a href="/profile?id={{id}}">{{data[id]["name"]}}</a>
             </div>
-            <div class="result-role">{{data[id]["role"]}}</div>
+            <div class="result-title">{{data[id]["title"]}}</div>
             <div class="table"> <ul class="result-tags-list">
                 {% for tag in data[id]["tags"]%}
                 <li class="tag"><a class="competence-tag-link" href="/search?query={{tag}}">{{tag}}</a></li>

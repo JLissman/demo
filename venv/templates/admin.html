@@ -35,15 +35,12 @@
 <label for="autoTools">Auto Tools</label>
 <div id="autoTools" class="formContainer">
 
-    {% if linked == 0 %}
         <form action="admin" method="post">
         <button name="action" value="linkedin">Start Linkedin Scraper</button>
         </form>
-    {% else %}
-        <button>Linkedin Scraper is running</button>
-    {% endif %}
 
-    {% if cvreader == 0 %}
+
+
 
         <form action="admin" method="post">
         <button name="action" value="cvreader">Start CV Reader</button>
@@ -53,9 +50,7 @@
             <input name="url" value="url">
             <button name="action" value="singlelinkedin">Fetch single linkedin profile</button>
         </form>
-    {% else %}
-        <button>CvReader is running</button>
-    {% endif %}
+
 </div>
 
 

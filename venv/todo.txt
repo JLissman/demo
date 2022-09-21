@@ -1,22 +1,16 @@
 CVREADER: add functionality to add to database
 
-
-
-Builders: Convert to Jinja template code instead?
-
-
 CSS: basically all fucking CSS
-
 
 Database:
     add field for CV to be able to display/download CVs from profile? if so add download / display link
 
-
-
-CELERY: Add backend to get status logs
-
+CELERY: Add backend to get status logs (rabbitmq rpc?)
 
 JS:
+    advanced search:
+        form validation & functionality
+
     Adminpage:
         fix button behaviour after celery backend is properly implemented
         add form validation to single linkedin profile scrape (we need an url)

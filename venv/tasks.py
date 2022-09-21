@@ -39,8 +39,11 @@ def getLinkedinProfile(profile_url):
     print("Scraping profile:"+profile_url)
     scrape.login()
     profile = scrape.get_profile_info(profile_url)
+    #convert to dict for single profile insertion into DB
+    #(first_name, last_name, title, img_url, location, description, competence_list))
+    profileDict = {"firstname":profile[0], "lastname":profile[1],"role":profile[2],"image_url":profile[3], "location":profile[4], "description":profile[5], "tags":profile[6]}
     scrape.shutdown()
-    db.add_consult(profile)
+    db.add_consult(profileDict)
     return{'status':'Profile imported'}
 
 def checkWorker():

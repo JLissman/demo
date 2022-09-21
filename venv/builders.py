@@ -86,7 +86,7 @@ def build_locations():
     return html_locations
 
 def build_roles():
-    roles = db.get_all_roles()
+    roles = db.get_all_titles()
     html_roles = ""
     for role in roles:
         html_roles = html_roles + '<option value = "'+str(role[0])+'"> '+str(role[0])+' </ option>'

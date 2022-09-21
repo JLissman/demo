@@ -42,14 +42,14 @@ app.register_blueprint(remove_tag_from_consult)
 @app.route("/home")
 @login_is_required
 def home():
-    programmingTags = build.build_tags()
+    programmingTags = db.get_all_tags() + db.get_all_locations() + db.get_all_titles()
     return render_template('index.html', programmingLanguages=programmingTags)
 
 
 @app.route("/search")
 @login_is_required
 def searchresults():
-    programmingTags = build.build_tags()
+    programmingTags = db.get_all_tags() + db.get_all_locations() + db.get_all_titles()
     arguments  = request.args.get('query')
     if(arguments is not None):
         queryList = arguments.split(",")
@@ -105,8 +105,6 @@ def test():
 @app.route("/profile")
 @login_is_required
 def profile():
-    #convert to jinja
-    #programmingTags = build.build_tags()
     programmingTags = db.get_all_tags()
     id = request.args.get('id')
     consult = db.get_consult_by_id(id)
