@@ -43,7 +43,7 @@
 }
 
 .table{
-	display: table;
+	display: flexbox;
 	margin: 0 auto;
 }
 
@@ -54,7 +54,7 @@
     padding:3px;
     display: inline;
     white-space: nowrap;
-
+    margin-top:20px;
 
 }
 

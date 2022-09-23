@@ -10,7 +10,7 @@
 </head>
 <body >
 
-    <div class="topmenu">
+    <nav id="topmenu">
         <a href="/home">Home</a>
         <a class="active" href="search">All Consultants</a>
         <a href="advSearch">Avanced Search</a>
@@ -23,9 +23,10 @@
                 <option value="{{language[1]}}">{{language[1]}}</option>
                 {% endfor%}
                 </datalist></form>
+
         <div id="userName">Logged in as:<br><img id="profile_image" width="50px" height="50px" src={{session['image']}}> {{session['name']}}</div>
         <a href="logout">Log out</a>
-    </div>
+    </nav>
     <div id="searchtags-container">
 
     </div>
@@ -39,7 +40,7 @@
                 {% if 'www' in data[id]["image_url"] or 'http' in data[id]["image_url"] %}
                 <img class="profile-img"src='{{data[id]["image_url"]}}'>
                 {% else %}
-                <img class="profile-img" src="{{ url_for('static', filename=data[id]['image_url']) }}">
+                <img class="profile-img" src="{{ url_for('static', filename=data[id]['image_url'])}}">
                 {% endif %}
 
 
@@ -48,11 +49,13 @@
                 <a href="/profile?id={{id}}">{{data[id]["name"]}}</a>
             </div>
             <div class="result-title">{{data[id]["title"]}}</div>
-            <div class="table"> <ul class="result-tags-list">
+            <div class="table"> <div class="result-tags-list">
                 {% for tag in data[id]["tags"]%}
-                <li class="tag"><a class="competence-tag-link" href="/search?query={{tag}}">{{tag}}</a></li>
+                <div class="tag"><a class="competence-tag-link" href="/search?query={{tag}}">{{tag}}</a></div>
                 {% endfor %}
-            </ul></div><div class="description">{{data[id]["description"]}}</div>
+
+
+            </div></div><div class="description">{{data[id]["description"]}}</div>
             <div class="result-location">
                 <img class="location-tag"src="https://www.shareicon.net/data/512x512/2016/08/24/819488_pin_512x512.png">
                   {{data[id]["location"]}}

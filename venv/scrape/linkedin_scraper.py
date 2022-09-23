@@ -32,8 +32,9 @@ def login():
     options.add_argument("--enable-javascript")
     #options.add_argument("--headless")
     driver = webdriver.Chrome(options=options)
-    user = "facem"
-    password = "Spo3"
+
+    user = "face"
+    password = "S"
     driver.get('https://www.linkedin.com/login/')
     if "signup" not in driver.current_url:
         driver.find_element('xpath','//*[@id="username"]').send_keys(user)#send in username to username field
@@ -152,6 +153,8 @@ def scrapeAndSave():
         temp_profile_list = get_people_from_company_search(url, profile_url_list)
         profile_url_list.extend(temp_profile_list)  # add lists together
     print("profile url length "+str(len(profile_url_list)))
+    testprofile = ""
+
     profiles = get_profile_info(profile_url_list)
 
     #save profiles to CSV instead so i dont have to run this script over and over each time during debugging

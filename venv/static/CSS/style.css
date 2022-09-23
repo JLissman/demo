@@ -8,16 +8,14 @@ a {
 
 
 
-.topmenu {
+#topmenu {
     overflow: hidden;
     background-color: #2ab9cc;
+    display:flexbox;
 }
-
-
-.topmenu a {
+#topmenu a {
     float: left;
     margin-left:10%;
-    display: inline;
     color: black;
     text-align: center;
     padding: 14px;
@@ -26,17 +24,17 @@ a {
 
 }
 
-.topmenu a:hover {
+#topmenu a:hover {
     background-color: rgba(35, 121, 182, 0.68);
     color: black;
 }
 
-.topmenu a.active {
+#topmenu a.active {
     background-color: #2196F3;
     color: white;
 }
 
-.topmenu input[type=text] {
+#topmenu input[type=text] {
     float: right;
     padding: 6px;
     border: none;

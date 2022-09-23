@@ -47,7 +47,7 @@ def getSkillsAndTools(pdf):
     #cropped_im2.save(output)
 
 
-def getDescription(pdf):
+def getDescriptionImg(pdf):
     fullImg_path = "C:\\Users\\Jonathan\\PycharmProjects\\demo\\venv\\cvReader\\png\\" + pdf.replace(".pdf", ".png")
     output = "C:\\Users\\Jonathan\\PycharmProjects\\demo\\venv\\cvReader\\png\\" + pdf.replace(".pdf", "DESC.png")
 
@@ -158,7 +158,7 @@ def checkPngs():
     pass
 
 
-def getRole(pdf):
+def getTitle(pdf):
     fullImg_path = "C:\\Users\\Jonathan\\PycharmProjects\\demo\\venv\\cvReader\\png\\" + pdf.replace(".pdf", ".png")
     output = "C:\\Users\\Jonathan\\PycharmProjects\\demo\\venv\\cvReader\\png\\" + pdf.replace(".pdf", "CARD.png")
 
@@ -180,41 +180,62 @@ def checkSpellingAndGrammar(text):
     my_tool = language_tool_python.LanguageTool('en-US')
 
     correct_text = my_tool.correct(text)
-
+    my_tool.
     # printing some texts
     print("Original Text:", text)
     print("Text after correction:", correct_text)
 
 
+def loadCSV():
+    result = []
+    with open('C:/Users/Jonathan/PycharmProjects/demo/venv/cvReader/checkedPeople.csv', 'r') as csvFile:
+        reader = csv.reader(csvFile)
+        for row in reader:
+            result.append(row)
+        return result
+
+
+def writeCSV(data):
+    with open('C:/Users/Jonathan/PycharmProjects/demo/venv/cvReader/checkedPeople.csv', 'a', newline='') as file:
+        writer = csv.writer(file, delimiter='\n', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(data)
+
+
 if __name__ == '__main__':
     files = getFileNames()
+    checkedFiles = loadCSV()
     profiles = []
     for file in files:
-        print("working on "+file)
-        convertToPng(file)
+        if file not in (item for sublist in checkedFiles for item in sublist):
+            print("working on "+file)
+            convertToPng(file)
 
-        getSkillsAndTools(file)
-        skills = extractTextFromImage(file.replace(".pdf", "TOOLS.png")).split("\n")
-        #extract skills
-        tags = []
-        for skill in skills:
-            if skill != skill.upper() and skill != "y of Aspose. Words. To discover the full versions of our APIs" and skill != "yose.com/words/":
-                tags.append(skill)
+            getSkillsAndTools(file)
+            skills = extractTextFromImage(file.replace(".pdf", "TOOLS.png")).split("\n")
+            #extract skills
+            tags = []
+            for skill in skills:
+                if skill != skill.upper() and skill != "y of Aspose. Words. To discover the full versions of our APIs" and skill != "yose.com/words/":
+                    tags.append(skill)
 
-        getDescription(file)
-        description = extractTextFromImage(file.replace(".pdf", "DESC.png"))
+            getDescriptionImg(file)
+            description = extractTextFromImage(file.replace(".pdf", "DESC.png")).replace("'","")
+            #getLocationImg(file)
+            getTitle(file)
+            nameAndtitle = extractTextFromImage(file.replace(".pdf", "CARD.png")).split("\n")
+            title = nameAndtitle[1]
+            name = nameAndtitle[0]
+            print(name)
+            firstname = name.split(" ")[0]
+            lastname_split = name.split(" ")[1:]
+            lastname = ""
+            for n in lastname_split:
+                lastname += " " + n
 
-        getRole(file)
-        nameAndRole = extractTextFromImage(file.replace(".pdf", "CARD.png")).split("\n")
-        role = nameAndRole[1]
-        name = nameAndRole[0]
-        print(name)
-        firstname = name.split(" ")[0]
-        lastname = name.split(" ")[1:]
-        saveImage(file, name)
-        image_url = "{{ url_for('static', filename='profilePictures/" + name + ".jpg') }}"
-        profiles.append({"firstname":firstname,"lastname":lastname, "role":role, "description":description, "image_url":image_url, "tags":tags})
-
+            saveImage(file, name)
+            image_url = 'profilePictures/' + name + '.jpg'
+            profiles.append({"firstname":firstname,"lastname":lastname.strip(), "title":title,"location":"Malmö", "description":str(description), "image_url":image_url, "tags":tags})
+            writeCSV(file)
     print("adding consultants to db")
     for p in profiles:
-        db.add_consult(p)
+        add_consult(p)

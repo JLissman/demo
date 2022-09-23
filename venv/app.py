@@ -8,8 +8,8 @@ import builders as build
 import copy
 from werkzeug.utils import secure_filename
 from adminTools import admin_page, celery_status, add_consult, remove_consult, upload_cv, add_tag, remove_tag, add_tag_to_consult, remove_tag_from_consult
-
-
+import random
+import string
 #root paths and settings
 sys.path.insert(0, os.path.dirname(__file__))
 project_root = os.path.dirname(__file__)
@@ -26,6 +26,7 @@ app.register_blueprint(index_page)
 app.register_blueprint(login_page)
 app.register_blueprint(callback_page)
 app.register_blueprint(logout_page)
+
 #admintools
 app.register_blueprint(admin_page)
 app.register_blueprint(celery_status)
@@ -133,14 +134,19 @@ def checkSearch_v2(queryList, dataList):
 
 
 def uploadPicture(pic):
-    #need to check if filename exist and then if it does - rename file to something else & return new name
+    #need to check if filename exist and then if it does - rename file to something else & return new nam
     filename = secure_filename(pic.filename)
     try:
         fileExists = open(app.config['UPLOAD_FOLDER']+"\\profilePictures\\"+filename, "r")
-        return "File Exists"
+        if(fileExists):
+            letters = string.ascii_letters
+            filename = filename.join(random.choice(letters) for i in range(10))
+            pic.save(os.path.join(app.config['UPLOAD_FOLDER'] + "\\profilePictures\\"+filename))
+            return filename
+
     except FileNotFoundError:
         pic.save(os.path.join(app.config['UPLOAD_FOLDER']+"\\profilePictures\\"+filename))
-        return "Success"
+        return filename
     except Exception as e:
         print("error occured during file upload")
         print(e)

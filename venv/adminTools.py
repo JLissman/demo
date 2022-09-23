@@ -45,7 +45,7 @@ def admin():
             print(url)
             task.getLinkedinProfile(url).delay()
 
-    return render_template('admin.html', consultantsOptions=consultants, programmingLanguages=tags)
+    return render_template('admin.html', consultantsOptions=consultants, programmingLanguages=tags, resumes=cv)
 
 #admintools
 @celery_status.route('/admin/celeryStatus', methods=['POST', 'GET'])
