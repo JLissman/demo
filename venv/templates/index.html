@@ -10,27 +10,29 @@
 
 </head>
 <body>
-    <div class="topmenu">
+    <nav class="topmenu">
         <a class="active" href="/home">Home</a>
         <a href="search">All Consultants</a>
         <a href="advSearch">Advanced Search</a>
-        <div id="userName">Logged in as:<br><img id="profile_image" width="50px" height="50px" src={{session['image']}}> {{session['name']}}</div>
-        <a href="logout">Log out</a>
+
+
         {% if session["admin"] == 1 %}
         <a href="admin"> Admin Tools</a>
         {% endif %}
         <form id="searchForm" action="search" autocomplete="off">
         <input name="query" id="search" type="text" list="programmingLanguages" placeholder="Search">
+            <div id="searchtags-container">
+
+    </div>
             <datalist id="programmingLanguages">
                 {% for language in programmingLanguages%}
                 <option value="{{language[1]}}">{{language[1]}}</option>
                 {% endfor%}
                 </datalist></form>
 
-    </div>
-    <div id="searchtags-container">
+    </nav>
+    <div id="userName"><p>Logged in as: <br><b>{{session['name']}}</b></p><!--<img id="profile_image" width="50px" height="50px" src={{session['image']}}>--> <a href="logout">Log out</a></div>
 
-    </div>
 <div id="textcontainer"></div>
 <div id="results-container"></div>
 

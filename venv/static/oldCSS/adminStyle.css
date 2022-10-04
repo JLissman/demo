@@ -34,3 +34,15 @@ div.formContainer label{
 #AddNewConsultFormContainer{
    width:auto;
 }
+
+
+#autotools{
+    display:flexbox;
+
+}
+
+#resumeContainer{
+}
+
+#linkedinContainer{
+width:auto;}

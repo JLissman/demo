@@ -1,3 +1,4 @@
+import csv
 import glob
 import os
 import fitz
@@ -180,7 +181,7 @@ def checkSpellingAndGrammar(text):
     my_tool = language_tool_python.LanguageTool('en-US')
 
     correct_text = my_tool.correct(text)
-    my_tool.
+
     # printing some texts
     print("Original Text:", text)
     print("Text after correction:", correct_text)

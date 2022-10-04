@@ -1,8 +1,8 @@
 import database as db
 
+''' deprecated - keeping just in case
 
 
-#old - keeping just in case
 def build_consultants(data):
     finalHTML = ""
     print(data)
@@ -91,3 +91,4 @@ def build_roles():
     for role in roles:
         html_roles = html_roles + '<option value = "'+str(role[0])+'"> '+str(role[0])+' </ option>'
     return html_roles
+'''

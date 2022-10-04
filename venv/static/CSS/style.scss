@@ -1,0 +1,258 @@
+@import '../SCSS/_variables.scss';
+@import '../SCSS/_mixins.scss';
+@import '../SCSS/util.scss';
+
+a {
+  text-decoration: none;
+  color: black;
+  white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+
+/* header menu */
+.topmenu{
+  background-color:$headerColor;
+  display:flexbox;
+  overflow: hidden;
+   & a{
+    background-color:$btnColor;
+    color:$textColor;
+    float: left;
+    margin-left:auto;
+    color: black;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+    font-size: 17px;
+   &:hover{
+      background-color:$btnHoverColor;
+      color: black;
+   }
+  &.active{
+    background-color:#2196F3;
+    color: white;
+  }
+   }
+  & input{
+    float: right;
+    padding: 6px;
+    border: none;
+    margin-top: 8px;
+    margin-right: 16px;
+    font-size: 17px;
+    width:30vw;
+    border: 1px solid;
+    border-color:black;
+  }
+
+}
+
+
+
+/* tags to search for */
+#searchtags-container{
+    margin-top: -1px;
+    border-radius: 25px;
+    border: 1px solid rgb(0, 0, 0);
+    padding:3px;
+    margin:2px;
+    background:#8fbfde;
+    display:none;
+    justify-content:space-between;
+    position:relative;
+
+    float:right;
+  & .searchtag{
+    margin-top: -1px;
+    border-radius: 25px;
+    border: 1px solid rgb(0, 0, 0);
+    background-color:#36a0ee;
+    padding:3px;
+    margin:2px;
+    display: inline;
+    position:relative;
+    float:right;
+     & .removetag{
+      float:right;
+       margin:0;
+       text-decoration:none;
+      position:relative;
+       padding:0;
+       background:#36a0ee;
+    }
+    }
+
+  }
+
+
+
+footer{
+    min-height:50px;
+    background: #36a0ee;
+    margin-top:auto;
+  & a{
+    float: left;
+    margin-left:10%;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+    font-size: 20px;
+  &:hover{
+    background-color: #ddd;
+}
+}
+}
+
+
+/* profiles from search */
+.search-results-container{
+  @include flexCenter('column');
+    text-align:center;
+  & .profile-img {
+    width:100px;
+    height:100px;
+    display:inline-block;
+}
+  & .location-tag{
+    width:40px;
+    height:30px;
+}
+  & .entity-result {
+    white-space:normal;
+    display:inline-grid;
+    background: #0099ff;
+    margin-left:10%;
+    border-radius: 25px;
+    width:50%;
+    border: 2px solid rgb(0, 0, 0);
+    padding: 2%;
+}
+ & .result-name {
+    font-size:200%;
+    text-align:center;
+    position:relative;
+    white-space:normal;
+    display:inline-block;
+}
+ & .result-role {
+    text-align:center;
+    position:relative;
+    font-size:150%;
+}
+ & .result-tags-list {
+    text-align:center;
+    list-style:none;
+    margin:20px
+
+}
+.table{
+	display: flexbox;
+	margin: 0 auto;
+  & .tag {
+    border-radius: 25px;
+    border: 1px solid rgb(0, 0, 0);
+    padding:3px;
+    display: inline;
+    white-space: nowrap;
+    margin-top:20px;
+
+}
+
+}
+
+}
+
+/* profile page */
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  background-color:blueviolet;
+  & .title {
+  color: grey;
+  font-size: 18px;
+}
+ & button {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+  & .tag {
+    margin-top: -1px;
+    border-radius: 25px;
+    border: 1px solid rgb(0, 0, 0);
+    padding:3px;
+    margin:2px;
+    display: inline;
+}
+  & a {
+  text-decoration: none;
+  font-size: 22px;
+  color: black;
+  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+.result-location{
+    float:right;
+}
+
+/* login status */
+#userName{
+  background:$headerColor;
+  padding:3px;
+  display:inline;
+  white-space:nowrap;
+  & a{
+    background:$btnColor;
+    float: left;
+    margin-left:0;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 1px;
+    text-decoration: none;
+    font-size: 20px;
+    width:10vh;
+  }
+
+}
+
+
+h1{
+    text-align:center;
+}
+
+
+body {
+  @include background();
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}

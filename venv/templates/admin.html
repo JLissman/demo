@@ -34,23 +34,32 @@
 {% if session["admin"] == 1 %}
 <label for="autoTools">Auto Tools</label>
 <div id="autoTools" class="formContainer">
-
+    <div id ="linkedinContainer" class="formContainer">
         <form action="admin" method="post">
         <button name="action" value="linkedin">Start Linkedin Scraper</button>
-        </form>
-
-
-
-
-        <form action="admin" method="post">
-        <button name="action" value="cvreader">Start CV Reader</button>
         </form>
 
         <form action="admin" method="post">
             <input name="url" value="url">
             <button name="action" value="singlelinkedin">Fetch single linkedin profile</button>
         </form>
-
+</div>
+    <div id="cvReaderContainer" class="formContainer"><form action="admin" method="post">
+        <button name="action" value="cvreader">Start CV Reader</button>
+        </form>
+        <div id = "resumeContainer" class="">
+        {% for key, value in resumes.items() %}
+            <div class="cv"><p>{{key}}
+            {% if value == 1%}
+            ✔
+            {% else %}
+            X
+            {% endif %}
+                </p>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
 </div>
 
 

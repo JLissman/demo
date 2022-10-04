@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/result.css') }}">
+       <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='CSS/result.css') }}">-->
     <meta charset="UTF-8">
     <title>Competence Finder</title>
     <script src="{{ url_for('static', filename='js/searchtags.js') }}" defer></script>
@@ -10,31 +10,37 @@
 </head>
 <body >
 
-    <nav id="topmenu">
+    <nav class="topmenu">
         <a href="/home">Home</a>
         <a class="active" href="search">All Consultants</a>
-        <a href="advSearch">Avanced Search</a>
+        <a href="advSearch">Advanced Search</a>
 
 
+        {% if session["admin"] == 1 %}
+        <a href="admin"> Admin Tools</a>
+        {% endif %}
         <form id="searchForm" action="search" autocomplete="off">
-        <input name="query" id="search" type="text" list="programmingLanguages" class="input" placeholder="Search">
+        <input name="query" id="search" type="text" list="programmingLanguages" placeholder="Search">
+            <div id="searchtags-container">
+
+    </div>
             <datalist id="programmingLanguages">
                 {% for language in programmingLanguages%}
                 <option value="{{language[1]}}">{{language[1]}}</option>
                 {% endfor%}
                 </datalist></form>
 
-        <div id="userName">Logged in as:<br><img id="profile_image" width="50px" height="50px" src={{session['image']}}> {{session['name']}}</div>
-        <a href="logout">Log out</a>
     </nav>
+    <div id="userName"><p>Logged in as: <br><b>{{session['name']}}</b></p><!--<img id="profile_image" width="50px" height="50px" src={{session['image']}}>--> <a href="logout">Log out</a></div>
+
     <div id="searchtags-container">
 
     </div>
 <h1>{{ keywords}}</h1>
 <div class="search-results-container">
-<ul class="resultList">
+<div class="resultList">
     {% for id in data %}
-    <li class="entity-result">
+    <div class="entity-result">
         <div class="searchResult">
             <div class="result-img">
                 {% if 'www' in data[id]["image_url"] or 'http' in data[id]["image_url"] %}
@@ -51,7 +57,7 @@
             <div class="result-title">{{data[id]["title"]}}</div>
             <div class="table"> <div class="result-tags-list">
                 {% for tag in data[id]["tags"]%}
-                <div class="tag"><a class="competence-tag-link" href="/search?query={{tag}}">{{tag}}</a></div>
+                <a class="competence-tag-link tag" href="/search?query={{tag}}">{{tag}}</a>
                 {% endfor %}
 
 
@@ -61,12 +67,12 @@
                   {{data[id]["location"]}}
             </div>
         </div>
-    </li>
+    </div>
 
 
     {% endfor %}
 
-</ul>
+</div>
 </div>
 <footer>
     <div id="menu-outerFooter">

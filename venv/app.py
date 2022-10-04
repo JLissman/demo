@@ -10,6 +10,14 @@ from werkzeug.utils import secure_filename
 from adminTools import admin_page, celery_status, add_consult, remove_consult, upload_cv, add_tag, remove_tag, add_tag_to_consult, remove_tag_from_consult
 import random
 import string
+from flask_scss import Scss
+
+app = Flask(__name__)
+Scss(app, asset_dir='assets')
+
+
+
+
 #root paths and settings
 sys.path.insert(0, os.path.dirname(__file__))
 project_root = os.path.dirname(__file__)

@@ -3,7 +3,7 @@ from login_app import login_is_required
 import database as db
 import tasks as task
 from werkzeug.utils import secure_filename
-
+import cvReader.pdfImageOCR as ocr
 
 admin_page = Blueprint('admin page', __name__, template_folder='templates')
 celery_status = Blueprint('celery status', __name__, template_folder="templates")
@@ -27,6 +27,7 @@ def admin():
     status = task.get_celery_worker_status()
     consultants = db.get_all_consultants()
     tags = db.get_all_tags()
+
     print(request.form)
     if request.method == 'POST' and request.form["action"] ==  'linkedin':
         linked = task.runLinkedinScraper.delay()
@@ -45,7 +46,7 @@ def admin():
             print(url)
             task.getLinkedinProfile(url).delay()
 
-    return render_template('admin.html', consultantsOptions=consultants, programmingLanguages=tags, resumes=cv)
+    return render_template('admin.html', consultantsOptions=consultants, programmingLanguages=tags, resumes=checkAddedResumes())
 
 #admintools
 @celery_status.route('/admin/celeryStatus', methods=['POST', 'GET'])
@@ -158,3 +159,17 @@ def removeConsult():
         return "Successfully deleted consult with id:"+request.form["id"]+ "<button onclick='history.back()'>Go Back</button>"
     else:
         return "something went wrong. oops"
+
+
+
+def checkAddedResumes():
+    finishedResumes = ocr.loadCSV()
+    totalResumes = ocr.getFileNames()
+    result = {}
+    for resume in totalResumes:
+        if resume in finishedResumes:
+            result[resume.replace("cvReader\\cvs\\","")] = 1
+        else:
+            result[resume.replace("cvReader\\cvs\\","")] = 0
+
+    return result
